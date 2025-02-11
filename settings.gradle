@@ -1,0 +1,5 @@
+include 'app:server'
+findProject(':app:server')?.name = 'server'
+include 'app:cli'
+findProject(':app:cli')?.name = 'cli'
+
