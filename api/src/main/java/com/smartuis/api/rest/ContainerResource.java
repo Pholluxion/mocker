@@ -43,24 +43,25 @@ public class ContainerResource {
     }
 
 
-    @PostMapping("/event/{name}")
-    public Flux<ContainerEvent> events(@RequestBody ContainerEvent event, @PathVariable String name) {
+    @GetMapping("/event/{id}")
+    public Mono<ResponseEntity<ContainerDTO>> events(@PathVariable String id,@RequestParam ContainerEvent event) {
 
-        var stateMachine = stateMachines.get(name);
+        var stateMachine = stateMachines.get(id);
 
         var message = MessageBuilder.withPayload(event).build();
-        return stateMachine
-                .sendEvent(Mono.just(message))
-                .map(s -> s.getMessage().getPayload());
+         stateMachine.sendEvent(Mono.just(message)).subscribe();
 
+         var currentState = Objects.requireNonNull(stateMachine.getState()).getId().toString();
+
+        return Mono.just(ResponseEntity.ok(new ContainerDTO(id, currentState)));
 
     }
 
 
-    @GetMapping("/create/{name}")
-    public Mono<ResponseEntity<Void>> createSchema(@PathVariable String name) {
+    @GetMapping("/create/{id}")
+    public Mono<ResponseEntity<Void>> createSchema(@PathVariable String id) {
 
-        var schema = schemaService.getSchema(name);
+        var schema = schemaService.getSchema(id);
 
         if (schema == null) {
             return Mono.just(ResponseEntity.notFound().build());
@@ -70,16 +71,16 @@ public class ContainerResource {
 
         stateMachine.getExtendedState().getVariables().put("schema", schema);
 
-        stateMachines.put(name, stateMachine);
+        stateMachines.put(id, stateMachine);
 
 
         return stateMachine.startReactively().map(s -> ResponseEntity.ok().build());
     }
 
-    @GetMapping(value = "/state/{name}")
-    public Mono<ContainerState> getCurrentState(@PathVariable String name) {
+    @GetMapping(value = "/state/{id}")
+    public Mono<ContainerState> getCurrentState(@PathVariable String id) {
 
-        var stateMachine = stateMachines.get(name);
+        var stateMachine = stateMachines.get(id);
 
         return Mono.just(Objects.requireNonNull(stateMachine.getState()).getId());
     }
@@ -92,7 +93,7 @@ public class ContainerResource {
             stateMachines.forEach((key, value) -> {
                 var id = value.getId();
                 var state = value.getState();
-                containers.add(new ContainerDTO(id, key, state.getId().toString()));
+                containers.add(new ContainerDTO(id, state.getId().toString()));
             });
             return containers;
         });

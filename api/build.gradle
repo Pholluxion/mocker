@@ -4,5 +4,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
 	implementation 'org.springframework.statemachine:spring-statemachine-autoconfigure:4.0.0'
+	implementation 'org.springframework.integration:spring-integration-mqtt:6.4.1'
+
 }
 

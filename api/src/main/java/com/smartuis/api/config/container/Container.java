@@ -1,6 +1,7 @@
 package com.smartuis.api.config.container;
 
 import com.samskivert.mustache.Mustache;
+import com.smartuis.api.config.mqtt.MqttConnector;
 import com.smartuis.shared.schema.Schema;
 import lombok.Getter;
 
@@ -28,7 +29,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Container extends StateMachineConfigurerAdapter<ContainerState, ContainerEvent> {
 
     private Disposable disposable;
+    private final MqttConnector mqttConnector = new MqttConnector();
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
+
 
     @Override
     public void configure(StateMachineConfigurationConfigurer<ContainerState, ContainerEvent> config) throws Exception {
@@ -65,45 +68,49 @@ public class Container extends StateMachineConfigurerAdapter<ContainerState, Con
     private Action<ContainerState, ContainerEvent> running() {
         return stateContext -> {
             Schema simulationSchema = (Schema) stateContext.getExtendedState().getVariables().get("schema");
-            if (simulationSchema != null) {
 
-                if (!isRunning.compareAndSet(false, true)) {
-                    return;
-                }
-
-                disposable = simulationSchema
-                        .schema()
-                        .getSampler()
-                        .sample()
-                        .takeWhile(interval -> isRunning.get())
-                        .doOnNext(interval -> {
-                            Map<String, Object> map = simulationSchema.schema().generate();
-
-                            String template = Optional.ofNullable(simulationSchema.schema().getTemplate()).orElse("");
-
-                            try {
-                                String formatted = Mustache.compiler().compile(template).execute(map);
-                                log.info(template.isEmpty() ? map.toString() : formatted);
-                            }catch (Exception e){
-                                log.error("Error while formatting template: {}", e.getMessage());
-                            }
-
-
-
-                        }).doOnComplete(() -> {
-                            isRunning.set(false);
-                            stateContext.getStateMachine()
-                                    .sendEvent(createMessage(ContainerEvent.STOP))
-                                    .subscribe()
-                                    .dispose();
-                        }).doOnError(error -> {
-                            isRunning.set(false);
-                            stateContext.getStateMachine()
-                                    .sendEvent(createMessage(ContainerEvent.KILL))
-                                    .subscribe()
-                                    .dispose();
-                        }).subscribe();
+            if (simulationSchema == null) {
+                return;
             }
+
+            if (!isRunning.compareAndSet(false, true)) {
+                return;
+            }
+
+            disposable = simulationSchema
+                    .schema()
+                    .getSampler()
+                    .sample()
+                    .takeWhile(interval -> isRunning.get())
+                    .doOnNext(interval -> {
+                        Map<String, Object> map = simulationSchema.schema().generate();
+
+                        String template = simulationSchema.schema().getTemplate();
+
+                        try {
+                            String formatted = Mustache.compiler().compile(template).execute(map);
+                            log.info(template.isEmpty() ? map.toString() : formatted);
+                            mqttConnector.publish("v1/devices/me/telemetry", formatted, 1, false);
+
+                        } catch (Exception e) {
+                            log.error("Error while formatting template: {}", e.getMessage());
+                        }
+
+
+                    }).doOnComplete(() -> {
+                        isRunning.set(false);
+                        stateContext.getStateMachine()
+                                .sendEvent(createMessage(ContainerEvent.STOP))
+                                .subscribe()
+                                .dispose();
+                    }).doOnError(error -> {
+                        isRunning.set(false);
+                        stateContext.getStateMachine()
+                                .sendEvent(createMessage(ContainerEvent.KILL))
+                                .subscribe()
+                                .dispose();
+                    }).subscribe();
+
         };
     }
 
@@ -127,6 +134,15 @@ public class Container extends StateMachineConfigurerAdapter<ContainerState, Con
     }
 
     private Action<ContainerState, ContainerEvent> created() {
+        String host = "localhost";
+        int port = 1883;
+        String clientId = "3rlbj87fkk0weoapdiqo";
+        String username = "wcldbcpixkisxeyqc5yz";
+        String password = "ngwusbxciho1xinuox32";
+
+        mqttConnector.connect(host, port, clientId, username, password);
+
+
         return stateContext -> log.info("Container created!");
     }
 

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.smartuis.shared.interfaces.IGenerator;
+import com.smartuis.shared.interfaces.IProtocol;
 import com.smartuis.shared.interfaces.ISampler;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -24,9 +25,8 @@ public record Schema(
 
         @NotBlank String name;
         @Valid ISampler sampler;
+        @Valid List<IProtocol> protocols;
         @Valid List<IGenerator<?>> generators;
-        @JsonSetter(value = "",nulls = Nulls.AS_EMPTY)
-        String template;
 
         public Map<String, Object> generate() {
             return this
