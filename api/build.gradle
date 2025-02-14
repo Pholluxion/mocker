@@ -1,0 +1,8 @@
+dependencies {
+	implementation project(':shared')
+
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+	implementation 'org.springframework.statemachine:spring-statemachine-autoconfigure:4.0.0'
+}
+

@@ -1,0 +1,14 @@
+dependencies {
+
+	implementation project(':shared')
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.shell:spring-shell-starter'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.shell:spring-shell-dependencies:3.4.0"
+	}
+}

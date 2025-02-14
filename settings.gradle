@@ -1,0 +1,6 @@
+rootProject.name = 'mocker'
+
+include 'cli'
+include 'api'
+include 'shared'
+
