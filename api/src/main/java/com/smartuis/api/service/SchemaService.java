@@ -1,43 +1,21 @@
 package com.smartuis.api.service;
 
-import com.smartuis.api.repository.SchemaRepository;
-import com.smartuis.shared.schema.Schema;
-import org.springframework.stereotype.Service;
+import com.smartuis.api.models.schema.Schema;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-@Service
-public class SchemaService {
+public interface SchemaService {
 
-    private final SchemaRepository schemaRepository;
+    Mono<Schema> create(Schema schema);
 
-    public SchemaService(SchemaRepository schemaRepository) {
-        this.schemaRepository = schemaRepository;
-    }
+    Mono<Schema> getById(String id);
 
+    Flux<Schema> findAll();
 
-    public Schema createSchema(Schema schema) {
-        return schemaRepository.save(schema);
-    }
+    Mono<Schema> template(String id, Object template);
 
-    public Schema getSchema(String id) {
-        var schema = schemaRepository.findById(id);
-        return schema.orElse(null);
+    Mono<Boolean> delete(String id);
 
-    }
+    Mono<Boolean> existsByName(String id);
 
-    public Iterable<Schema> getSchemas() {
-        return schemaRepository.findAll();
-    }
-
-    public void deleteSchema(String id) {
-        schemaRepository.deleteById(id);
-    }
-
-    public Schema setTemplate(String id, String template) {
-        var schema = schemaRepository.findById(id);
-        if (schema.isEmpty()) {
-            return null;
-        }
-        schema.get().schema().setTemplate(template);
-        return schemaRepository.save(schema.get());
-    }
 }
