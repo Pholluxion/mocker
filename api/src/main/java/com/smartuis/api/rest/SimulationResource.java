@@ -1,5 +1,7 @@
 package com.smartuis.api.rest;
 
+import com.smartuis.api.config.amqp.AmqpConnector;
+import com.smartuis.api.config.mqtt.MqttConnector;
 import com.smartuis.api.simulator.Simulator;
 import com.smartuis.api.dtos.SimulatorDTO;
 import com.smartuis.api.service.SchemaService;
@@ -38,10 +40,15 @@ public class SimulationResource {
 
     @PostConstruct
     private void createContainers() {
-        var schemas = schemaService.findAll()
+      schemaService.findAll()
                 .map(schema -> {
                     var stateMachine = stateMachineFactory.getStateMachine();
+
                     stateMachine.getExtendedState().getVariables().put("schema", schema);
+                    stateMachine.getExtendedState().getVariables().put("mqtt", new MqttConnector());
+                    stateMachine.getExtendedState().getVariables().put("amqp", new AmqpConnector());
+                    stateMachine.getExtendedState().getVariables().put("isRunning", false);
+
                     stateMachines.put(schema.getId(), stateMachine);
                     return schema;
                 }).collectList().block();
@@ -99,6 +106,9 @@ public class SimulationResource {
         var stateMachine = stateMachineFactory.getStateMachine();
 
         stateMachine.getExtendedState().getVariables().put("schema", schema);
+        stateMachine.getExtendedState().getVariables().put("mqtt", new MqttConnector());
+        stateMachine.getExtendedState().getVariables().put("amqp", new AmqpConnector());
+        stateMachine.getExtendedState().getVariables().put("isRunning", false);
 
         stateMachines.put(schemaId, stateMachine);
 
@@ -153,4 +163,19 @@ public class SimulationResource {
             return containers;
         });
     }
+
+    @GetMapping(value = "/stream/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> getLogs(@PathVariable String id) {
+        var stateMachine = stateMachines.get(id);
+
+        if (stateMachine == null) {
+            return Flux.error(new IllegalArgumentException("Container not found"));
+        }
+
+        return Flux.interval(Duration.ofSeconds(1)).map(tick -> {
+            return (String) stateMachine.getExtendedState().getVariables().get("log");
+        });
+    }
+
 }
+
