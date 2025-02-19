@@ -84,3 +84,7 @@ app.*.map.json
 .history
 .svn/
 migrate_working_dir/
+
+/gradlew
+/gradlew.bat
+/gradle/
