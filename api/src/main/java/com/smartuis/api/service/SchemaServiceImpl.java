@@ -1,0 +1,56 @@
+package com.smartuis.api.service;
+
+import com.smartuis.api.repository.SchemaRepository;
+import com.smartuis.api.models.schema.Schema;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+
+@Service
+public class SchemaServiceImpl implements SchemaService {
+
+    private final SchemaRepository schemaRepository;
+
+    public SchemaServiceImpl(SchemaRepository schemaRepository) {
+        this.schemaRepository = schemaRepository;
+    }
+
+    @Override
+    public Mono<Schema> create(Schema schema) {
+        return schemaRepository.insert(schema);
+    }
+
+    @Override
+    public Mono<Schema> getById(String id) {
+        return schemaRepository.findById(id);
+    }
+
+    @Override
+    public Flux<Schema> findAll() {
+        return schemaRepository.findAll();
+    }
+
+    @Override
+    public Mono<Boolean> delete(String id) {
+         schemaRepository.deleteById(id);
+        return  schemaRepository.existsById(id);
+    }
+
+    @Override
+    public Mono<Boolean> existsByName(String name) {
+        return schemaRepository.findAll()
+                .any(schema -> schema.getName().equals(name));
+
+    }
+
+    @Override
+    public Mono<Schema> template(String id, Object template) {
+        return schemaRepository.findById(id)
+                .map(schema -> {
+                    schema.setTemplate(template);
+                    return schema;
+                })
+                .flatMap(schemaRepository::save);
+    }
+}

@@ -1,0 +1,33 @@
+name: Test Simulation
+protocols:
+  - type: mqtt
+    host: localhosts
+    port: 1883
+    topic: v1/devices/me/telemetry
+    clientId: egz9bshew6obwtx7wsr4
+    username: 7t8phvdm4govtgocmsdg
+    password: duojptfdooj32fdfcuzw
+  - type: amqp
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: simulation_exchange
+    routingKey: simulation.key
+sampler:
+  type: step
+  duration: 0
+  interval: 500
+generators:
+  - type: boolean
+    name: BooleanGenerator1
+    probability: 0.5
+  - type: boolean
+    name: BooleanGenerator2
+    probability: 0.5
+  - type: boolean
+    name: BooleanGenerator3
+    probability: 0.5
+  - type: boolean
+    name: BooleanGenerator4
+    probability: 0.5
