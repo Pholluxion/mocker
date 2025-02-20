@@ -3,7 +3,9 @@ package com.smartuis.cli;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.shell.command.annotation.CommandScan;
 
+@CommandScan(basePackages = "com.smartuis.cli.commands")
 @SpringBootApplication
 public class CliApplication {
 
@@ -11,5 +13,7 @@ public class CliApplication {
 
         SpringApplication.run(CliApplication.class, args);
     }
+
+
 
 }

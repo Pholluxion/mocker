@@ -25,15 +25,15 @@ public record AmqpProtocol(
     ) {
 
         if (port == null || port < 1) {
-            throw new IllegalArgumentException("mqtt protocol requires port");
+            throw new IllegalArgumentException("amqp protocol requires port");
         }
 
         if (host == null || host.isBlank()) {
-            throw new IllegalArgumentException("mqtt protocol requires host");
+            throw new IllegalArgumentException("amqp protocol requires host");
         }
 
         if (exchange == null || exchange.isBlank()) {
-            throw new IllegalArgumentException("mqtt protocol requires topic");
+            throw new IllegalArgumentException("amqp protocol requires exchange");
         }
 
         this.host = host;
