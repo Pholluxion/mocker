@@ -37,6 +37,7 @@ public class GlobalExceptionHandler {
         return Map.of(ERROR, ex.getMessage());
     }
 
+
     @ExceptionHandler(MustacheException.Context.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleMustacheException(MustacheException ex) {

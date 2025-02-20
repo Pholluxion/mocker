@@ -1,7 +1,8 @@
-package com.smartuis.api.service;
+package com.smartuis.api.service.impl;
 
 import com.smartuis.api.repository.SchemaRepository;
 import com.smartuis.api.models.schema.Schema;
+import com.smartuis.api.service.SchemaService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,7 +19,9 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public Mono<Schema> create(Schema schema) {
-        return schemaRepository.insert(schema);
+        return schemaRepository.findByName(schema.getName())
+                .flatMap(s -> Mono.error(new IllegalArgumentException("Schema with name " + schema.getName() + " already exists")))
+                .then(schemaRepository.save(schema));
     }
 
     @Override
@@ -33,14 +36,13 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public Mono<Boolean> delete(String id) {
-         schemaRepository.deleteById(id);
-        return  schemaRepository.existsById(id);
+        schemaRepository.deleteById(id);
+        return schemaRepository.existsById(id);
     }
 
     @Override
-    public Mono<Boolean> existsByName(String name) {
-        return schemaRepository.findAll()
-                .any(schema -> schema.getName().equals(name));
+    public Mono<Schema> existsByName(String name) {
+        return schemaRepository.findByName(name);
 
     }
 
@@ -53,4 +55,6 @@ public class SchemaServiceImpl implements SchemaService {
                 })
                 .flatMap(schemaRepository::save);
     }
+
+
 }

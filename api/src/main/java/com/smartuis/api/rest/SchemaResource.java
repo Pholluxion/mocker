@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(originPatterns = "*")
 @RequestMapping("/api/v1/schema")
 public class SchemaResource {
 
@@ -27,12 +28,7 @@ public class SchemaResource {
     @PostMapping
     public Mono<ResponseEntity<Schema>> create(@RequestBody @Valid Schema schema) {
 
-        var name = schema.getName();
-
-        return schemaService.existsByName(name)
-                .flatMap(exists -> exists ? Mono.empty() : Mono.just(schema))
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Schema with name " + name + " already exists")))
-                .flatMap(schemaService::create)
+        return schemaService.create(schema)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
 

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.shell.jline.PromptProvider;
 
 @Configuration
-public class ShellPrompt  implements PromptProvider {
+public class Prompt implements PromptProvider {
     @Override
     public AttributedString getPrompt() {
         return new AttributedString("mocker:> ");

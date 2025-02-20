@@ -132,13 +132,16 @@ public class Simulator {
 
         variables.put("isRunning", true);
 
-        Boolean isRunning = (Boolean) variables.get("isRunning");
+
         Schema schema = (Schema) variables.get("schema");
 
 
         var disposable = schema.getSampler()
                 .sample()
-                .takeWhile(interval -> Boolean.TRUE.equals(isRunning))
+                .takeWhile(interval -> {
+                    Boolean isRunning = (Boolean) variables.get("isRunning");
+                    return Boolean.TRUE.equals(isRunning);
+                })
                 .doOnNext(interval -> processSample(context))
                 .doOnComplete(() -> stopSimulation(context))
                 .doOnError(error -> handleError(context, error)).subscribe();
