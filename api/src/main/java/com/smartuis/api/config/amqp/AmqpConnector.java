@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * AmqpConnector is responsible for managing the connection to a RabbitMQ broker.
+ * It provides methods to connect, disconnect, send messages, and reconnect.
+ */
 @Slf4j
 public class AmqpConnector {
 
@@ -17,14 +21,28 @@ public class AmqpConnector {
     private Connection connection;
     private final ConnectionFactory connectionFactory;
 
+    /**
+     * Constructs an AmqpConnector with a new ConnectionFactory.
+     */
     public AmqpConnector() {
         this.connectionFactory = new ConnectionFactory();
     }
 
+    /**
+     * Checks if the connector is currently connected to the RabbitMQ broker.
+     *
+     * @return true if connected, false otherwise
+     */
     public boolean isConnected() {
         return connection != null && connection.isOpen() && channel != null && channel.isOpen();
     }
 
+    /**
+     * Connects to the RabbitMQ broker using the provided AmqpProtocol configuration.
+     * If already connected, it will first disconnect.
+     *
+     * @param protocol the AmqpProtocol configuration to use for the connection
+     */
     public synchronized void connect(AmqpProtocol protocol) {
         try {
             disconnect();
@@ -45,6 +63,10 @@ public class AmqpConnector {
         }
     }
 
+    /**
+     * Disconnects from the RabbitMQ broker. This method is annotated with @PreDestroy
+     * to ensure it is called when the application context is destroyed.
+     */
     @PreDestroy
     public synchronized void disconnect() {
         try {
@@ -63,6 +85,11 @@ public class AmqpConnector {
         }
     }
 
+    /**
+     * Sends a message to the RabbitMQ broker. If the channel is not open, it will attempt to reconnect.
+     *
+     * @param message the message to send
+     */
     public void sendMessage(String message) {
         try {
             if (!isConnected()) {
@@ -77,6 +104,10 @@ public class AmqpConnector {
         }
     }
 
+    /**
+     * Attempts to reconnect to the RabbitMQ broker using the existing protocol configuration.
+     * If the protocol configuration is missing, it will throw an IllegalStateException.
+     */
     public synchronized void reconnect() {
         try {
             if (protocol == null) {

@@ -6,16 +6,31 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+/**
+ * MqttConnector is responsible for managing the connection to an MQTT broker.
+ * It provides methods to connect, disconnect, and publish messages.
+ */
 @Slf4j
 public class MqttConnector {
 
     private MqttProtocol protocol;
     private IMqttAsyncClient client;
 
+    /**
+     * Checks if the connector is currently connected to the MQTT broker.
+     *
+     * @return true if connected, false otherwise
+     */
     public boolean isConnected() {
         return client != null && client.isConnected();
     }
 
+    /**
+     * Connects to the MQTT broker using the provided MqttProtocol configuration.
+     * If already connected, it will return immediately.
+     *
+     * @param protocol the MqttProtocol configuration to use for the connection
+     */
     public void connect(MqttProtocol protocol) {
         try {
             this.protocol = protocol;
@@ -32,7 +47,6 @@ public class MqttConnector {
             options.setPassword(this.protocol.password().toCharArray());
             options.setCleanSession(true);
             options.setAutomaticReconnect(true);
-
 
             client.setCallback(new MqttCallback() {
                 @Override
@@ -56,9 +70,12 @@ public class MqttConnector {
         } catch (MqttException e) {
             printError(e);
         }
-
     }
 
+    /**
+     * Disconnects from the MQTT broker. This method is annotated with @PreDestroy
+     * to ensure it is called when the application context is destroyed.
+     */
     @PreDestroy
     public void disconnect() {
         if (isConnected()) {
@@ -71,6 +88,11 @@ public class MqttConnector {
         }
     }
 
+    /**
+     * Publishes a message to the MQTT broker. If the client is not connected, it will log a warning.
+     *
+     * @param payload the message payload to publish
+     */
     public void publish(String payload) {
         if (!isConnected()) {
             log.warn("Channel is not open. Attempting to reconnect...");
@@ -87,7 +109,11 @@ public class MqttConnector {
         }
     }
 
-
+    /**
+     * Logs detailed error information for an MqttException.
+     *
+     * @param e the MqttException to log
+     */
     private void printError(MqttException e) {
         log.error("❌ Error on connection to the MQTT broker:");
         log.error("   - Message: {}", e.getMessage());
