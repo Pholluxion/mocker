@@ -1,5 +1,6 @@
 package com.smartuis.server.config.jackson;
 
+import com.smartuis.server.dtos.SchemaDTO;
 import com.smartuis.server.models.generators.BooleanGenerator;
 import com.smartuis.server.models.interfaces.IGenerator;
 import com.smartuis.server.models.interfaces.IProtocol;
@@ -8,6 +9,7 @@ import com.smartuis.server.models.protocols.AmqpProtocol;
 import com.smartuis.server.models.protocols.MqttProtocol;
 import com.smartuis.server.models.samplers.SequentialSampler;
 import com.smartuis.server.models.samplers.StepSampler;
+import com.smartuis.server.models.schema.Schema;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -68,6 +70,19 @@ public class JacksonHints implements RuntimeHintsRegistrar {
                 MemberCategory.INVOKE_DECLARED_METHODS,
                 MemberCategory.DECLARED_FIELDS
 
+        ));
+
+        hints.reflection().registerType(Schema.class, hint -> hint.withMembers(
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.DECLARED_FIELDS
+
+        ));
+
+        hints.reflection().registerType(SchemaDTO.class, hint -> hint.withMembers(
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.DECLARED_FIELDS
         ));
 
     }

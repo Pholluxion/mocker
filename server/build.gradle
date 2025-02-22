@@ -8,6 +8,10 @@ plugins {
 group = 'com.smartuis'
 version = '0.1.0'
 
+bootBuildImage{
+	setImageName("pholluxion/mocker-server")
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
