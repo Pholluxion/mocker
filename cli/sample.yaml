@@ -1,6 +1,6 @@
-name: Test Simulation
+name: Test Simulation 41
 protocols:
-  - type: mqtt2
+  - type: mqtt
     host: localhost
     port: 1883
     topic: v1/devices/me/telemetry

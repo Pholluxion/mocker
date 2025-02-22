@@ -103,6 +103,11 @@ public class Simulator {
 
     private void setupProtocols(StateContext<State, Event> context) {
 
+
+    }
+
+    private void startSimulation(StateContext<State, Event> context) {
+
         Map<Object, Object> variables = context.getExtendedState().getVariables();
 
         Schema schema = (Schema) variables.get("schema");
@@ -124,16 +129,9 @@ public class Simulator {
         if (mqttProtocol == null && amqpProtocol == null) {
             throw new IllegalArgumentException("No valid protocol found. Cannot start simulation.");
         }
-    }
 
-    private void startSimulation(StateContext<State, Event> context) {
-
-        Map<Object, Object> variables = context.getExtendedState().getVariables();
 
         variables.put("isRunning", true);
-
-
-        Schema schema = (Schema) variables.get("schema");
 
 
         var disposable = schema.getSampler()
@@ -142,7 +140,24 @@ public class Simulator {
                     Boolean isRunning = (Boolean) variables.get("isRunning");
                     return Boolean.TRUE.equals(isRunning);
                 })
-                .doOnNext(interval -> processSample(context))
+                .doOnNext(interval -> {
+                    var message = processSample(context);
+
+                    try {
+
+                        if (mqttConnector.isConnected()) {
+                            mqttConnector.publish(message);
+                        }
+
+                        if (amqpConnector.isConnected()) {
+                            amqpConnector.sendMessage(message);
+                        }
+
+                    } catch (Exception e) {
+                        handleError(context, e);
+                    }
+
+                })
                 .doOnComplete(() -> stopSimulation(context))
                 .doOnError(error -> handleError(context, error)).subscribe();
 
@@ -167,7 +182,7 @@ public class Simulator {
         }
     }
 
-    private void processSample(StateContext<State, Event> context) {
+    private String processSample(StateContext<State, Event> context) {
         try {
 
             Map<Object, Object> variables = context.getExtendedState().getVariables();
@@ -177,34 +192,12 @@ public class Simulator {
             Map<String, Object> data = schema.generate();
             Object template = schema.getTemplate();
 
-            String message = (template == null) ? data.toString() : Mustache.compiler().compile(template.toString()).execute(data);
+            return (template == null) ? data.toString() : Mustache.compiler().compile(template.toString()).execute(data);
 
-            context.getExtendedState().getVariables().put("log", message);
 
-            publishMessage(message, context);
         } catch (Exception e) {
             log.error("Error processing sample: {}", e.getMessage());
-        }
-    }
-
-    private void publishMessage(String message, StateContext<State, Event> context) {
-        try {
-
-            Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-            MqttConnector mqttConnector = (MqttConnector) variables.get("mqtt");
-            AmqpConnector amqpConnector = (AmqpConnector) variables.get("amqp");
-
-            if (mqttConnector.isConnected()) {
-                mqttConnector.publish(message);
-            }
-
-            if (amqpConnector.isConnected()) {
-                amqpConnector.sendMessage(message);
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to publish message: {}", e.getMessage());
+            return "";
         }
     }
 

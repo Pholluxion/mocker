@@ -1,11 +1,10 @@
 package com.smartuis.api.dtos;
 
 import lombok.Builder;
-import lombok.Data;
-
-@Data
+/**
+ * ErrorDTO is a data transfer object that represents an error.
+ * It contains details about the error and an associated message.
+ */
 @Builder
-public class ErrorDTO {
-    private String error;
-    private String message;
+public record ErrorDTO(String error, String message) {
 }

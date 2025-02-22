@@ -36,8 +36,10 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public Mono<Boolean> delete(String id) {
-        schemaRepository.deleteById(id);
-        return schemaRepository.existsById(id);
+        return schemaRepository.findById(id)
+                .flatMap(schemaRepository::delete)
+                .map(aBoolean -> true)
+                .defaultIfEmpty(false);
     }
 
     @Override

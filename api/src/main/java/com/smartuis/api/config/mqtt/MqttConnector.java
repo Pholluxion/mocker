@@ -6,6 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * MqttConnector is responsible for managing the connection to an MQTT broker.
  * It provides methods to connect, disconnect, and publish messages.
@@ -15,6 +19,7 @@ public class MqttConnector {
 
     private MqttProtocol protocol;
     private IMqttAsyncClient client;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     /**
      * Checks if the connector is currently connected to the MQTT broker.
@@ -52,6 +57,7 @@ public class MqttConnector {
                 @Override
                 public void connectionLost(Throwable cause) {
                     log.warn("Connection lost with the MQTT broker. Cause: {}", cause.getMessage());
+                    reconnect();
                 }
 
                 @Override
@@ -73,6 +79,16 @@ public class MqttConnector {
     }
 
     /**
+     * Attempts to reconnect with exponential backoff.
+     */
+    private void reconnect() {
+        scheduler.schedule(() -> {
+            log.info("Attempting to reconnect to the MQTT broker...");
+            connect(this.protocol);
+        }, 5, TimeUnit.SECONDS);
+    }
+
+    /**
      * Disconnects from the MQTT broker. This method is annotated with @PreDestroy
      * to ensure it is called when the application context is destroyed.
      */
@@ -86,6 +102,7 @@ public class MqttConnector {
                 printError(e);
             }
         }
+        scheduler.shutdown();
     }
 
     /**
@@ -96,6 +113,8 @@ public class MqttConnector {
     public void publish(String payload) {
         if (!isConnected()) {
             log.warn("Channel is not open. Attempting to reconnect...");
+            reconnect();
+            return;
         }
 
         MqttMessage message = new MqttMessage(payload.getBytes());
