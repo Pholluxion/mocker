@@ -19,6 +19,10 @@ build/
 .gradletasknamecache
 gradle-app.setting
 !gradle-wrapper.jar
+/gradlew.bat
+/gradlew
+/gradle/
+
 
 ##############################
 ## IntelliJ
@@ -47,44 +51,11 @@ out/
 *.log
 
 ##############################
-## api
+## server
 ##############################
-api/build/
+server/build/
 
 ##############################
 ## cli
 ##############################
 cli/build/
-
-##############################
-## app
-##############################
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Miscellaneous
-*.pyc
-*.swp
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-/gradlew
-/gradlew.bat
-/gradle/
