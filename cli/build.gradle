@@ -8,6 +8,18 @@ plugins {
 group = 'com.smartuis'
 version = '0.1.0'
 
+bootJar{
+	archiveBaseName = 'mocker'
+}
+
+graalvmNative {
+	binaries {
+		main {
+			setImageName('mocker')
+		}
+	}
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -27,25 +39,20 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2'
-	implementation 'org.springframework.shell:spring-shell-starter'
+	implementation 'info.picocli:picocli-spring-boot-starter:4.7.6'
+	implementation 'org.springframework.boot:spring-boot-starter-logging:3.4.3'
 
 	compileOnly 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.shell:spring-shell-dependencies:3.4.0"
-	}
-}
-
 
 tasks.named('test') {
 	useJUnitPlatform()

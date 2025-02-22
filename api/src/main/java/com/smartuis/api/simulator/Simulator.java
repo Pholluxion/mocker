@@ -8,6 +8,7 @@ import com.smartuis.api.models.protocols.AmqpProtocol;
 import com.smartuis.api.models.protocols.MqttProtocol;
 import com.smartuis.api.models.schema.Schema;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.messaging.support.MessageBuilder;
@@ -16,21 +17,44 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.StateMachineBuilder;
 
-import org.springframework.stereotype.Component;
-
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
-@Component
+@Getter
 public class Simulator {
 
     public enum State {CREATED, RUNNING, STOPPED, KILLED}
-
     public enum Event {START, STOP, KILL}
+
+    private final MqttConnector mqttConnector;
+
+    private final AmqpConnector amqpConnector;
+
+    private final AtomicBoolean isRunning;
+
+    private final Schema schema;
+
+    private final StateMachine<State, Event> stateMachine;
+
+    private Disposable disposable;
+
+    public Simulator(Schema schema) throws Exception {
+        this.schema = schema;
+        this.isRunning = new AtomicBoolean(false);
+        this.mqttConnector = new MqttConnector();
+        this.amqpConnector = new AmqpConnector();
+        this.stateMachine = createStateMachine();
+    }
+
+    public State getState() {
+        return stateMachine.getState().getId();
+    }
+
 
     public StateMachine<State, Event> createStateMachine() throws Exception {
         StateMachineBuilder.Builder<State, Event> builder = StateMachineBuilder.builder();
@@ -66,25 +90,14 @@ public class Simulator {
 
     private Action<State, Event> runningAction() {
 
-
         return context -> {
 
-            Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-            if (variables.get("isRunning") != null && (boolean) variables.get("isRunning")) {
+            if (isRunning.get()) {
                 log.warn("Simulation is already running.");
                 return;
             }
 
             try {
-                Schema schema = (Schema) variables.get("schema");
-
-                if (schema == null) {
-                    log.error("Schema not provided. Cannot start simulation.");
-                    context.getStateMachine().sendEvent(Mono.just(MessageBuilder.withPayload(Event.STOP).build())).subscribe();
-                    return;
-                }
-
                 setupProtocols(context);
                 startSimulation(context);
             } catch (Exception e) {
@@ -101,14 +114,45 @@ public class Simulator {
         return this::stopSimulation;
     }
 
+
+    private void startSimulation(StateContext<State, Event> context) {
+
+        isRunning.set(true);
+
+        disposable = schema.getSampler()
+                .sample()
+                .takeWhile(interval -> isRunning.get())
+                .doOnNext(interval -> publishMessage(context))
+                .doOnComplete(() -> stopSimulation(context))
+                .doOnError(error -> handleError(context, error))
+                .subscribe();
+
+    }
+
+    private void stopSimulation(StateContext<State, Event> context) {
+
+        if (isRunning.get()) {
+
+            disposable.dispose();
+
+            if (mqttConnector.isConnected()) {
+                mqttConnector.disconnect();
+            }
+
+            if (amqpConnector.isConnected()) {
+                amqpConnector.disconnect();
+            }
+
+            isRunning.set(false);
+            disposable = null;
+
+        } else {
+            log.warn("Simulation is not running.");
+        }
+    }
+
     private void setupProtocols(StateContext<State, Event> context) {
 
-        Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-        Schema schema = (Schema) variables.get("schema");
-
-        MqttConnector mqttConnector = (MqttConnector) variables.get("mqtt");
-        AmqpConnector amqpConnector = (AmqpConnector) variables.get("amqp");
 
         MqttProtocol mqttProtocol = (MqttProtocol) schema.getProtocolByType("mqtt");
         AmqpProtocol amqpProtocol = (AmqpProtocol) schema.getProtocolByType("amqp");
@@ -122,78 +166,17 @@ public class Simulator {
         }
 
         if (mqttProtocol == null && amqpProtocol == null) {
-            throw new IllegalArgumentException("No valid protocol found. Cannot start simulation.");
+            handleError(context, new Exception("No protocols found."));
         }
+
     }
 
-    private void startSimulation(StateContext<State, Event> context) {
 
-        Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-        variables.put("isRunning", true);
+    private void publishMessage(StateContext<State, Event> context) {
 
 
-        Schema schema = (Schema) variables.get("schema");
-
-
-        var disposable = schema.getSampler()
-                .sample()
-                .takeWhile(interval -> {
-                    Boolean isRunning = (Boolean) variables.get("isRunning");
-                    return Boolean.TRUE.equals(isRunning);
-                })
-                .doOnNext(interval -> processSample(context))
-                .doOnComplete(() -> stopSimulation(context))
-                .doOnError(error -> handleError(context, error)).subscribe();
-
-        variables.put("disposable", disposable);
-    }
-
-    private void stopSimulation(StateContext<State, Event> context) {
-        Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-        Boolean isRunning = (Boolean) variables.get("isRunning");
-        Disposable disposable = (Disposable) variables.get("disposable");
-
-        if (Boolean.TRUE.equals(isRunning)) {
-
-            disposable.dispose();
-
-            variables.put("isRunning", false);
-            variables.put("disposable", null);
-
-        } else {
-            log.warn("Simulation is not running.");
-        }
-    }
-
-    private void processSample(StateContext<State, Event> context) {
         try {
-
-            Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-            Schema schema = (Schema) variables.get("schema");
-
-            Map<String, Object> data = schema.generate();
-            Object template = schema.getTemplate();
-
-            String message = (template == null) ? data.toString() : Mustache.compiler().compile(template.toString()).execute(data);
-
-            context.getExtendedState().getVariables().put("log", message);
-
-            publishMessage(message, context);
-        } catch (Exception e) {
-            log.error("Error processing sample: {}", e.getMessage());
-        }
-    }
-
-    private void publishMessage(String message, StateContext<State, Event> context) {
-        try {
-
-            Map<Object, Object> variables = context.getExtendedState().getVariables();
-
-            MqttConnector mqttConnector = (MqttConnector) variables.get("mqtt");
-            AmqpConnector amqpConnector = (AmqpConnector) variables.get("amqp");
+            var message = processSample();
 
             if (mqttConnector.isConnected()) {
                 mqttConnector.publish(message);
@@ -204,14 +187,32 @@ public class Simulator {
             }
 
         } catch (Exception e) {
-            log.error("Failed to publish message: {}", e.getMessage());
+            handleError(context, e);
         }
+    }
+
+
+    private String processSample() {
+ 
+        Map<String, Object> data = schema.generate();
+        Object template = schema.getTemplate();
+
+        return (template == null) ?
+                data.toString() :
+                Mustache.compiler()
+                        .compile(template.toString())
+                        .execute(data);
+
+
     }
 
 
     private void handleError(StateContext<State, Event> context, Throwable error) {
         log.error("Error occurred: {}", error.getMessage());
-        context.getStateMachine().sendEvent(Mono.just(MessageBuilder.withPayload(Event.STOP).build())).subscribe();
+        var message = MessageBuilder.withPayload(Event.STOP).build();
+        context.getStateMachine()
+                .sendEvent(Mono.just(message))
+                .subscribe();
     }
 
 

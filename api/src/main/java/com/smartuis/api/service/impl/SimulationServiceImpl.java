@@ -50,7 +50,9 @@ public class SimulationServiceImpl implements SimulationService {
 
     @Override
     public Flux<String> logs(String id) {
-        return simulationRepository.logs(id);
+        return simulationRepository.getById(id)
+                .map(SimulationDTO::id)
+                .flatMapMany(simulationRepository::logs);
     }
 
 
