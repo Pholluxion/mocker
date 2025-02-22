@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 @Component
 @Command(
         name = "create",
+        aliases = {"c"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "Create a new simulation."
@@ -35,9 +36,12 @@ public class CreateSimulationCommand implements Callable<Integer> {
 
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
+
+        var url = baseUrl + "/api/v1/simulation/create/" + id;
+
         ResponseEntity<String> response = restTemplate
-                .exchange(baseUrl + "/api/v1/simulation/create/" + id, HttpMethod.GET,null, String.class);
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Simulation created successfully.");

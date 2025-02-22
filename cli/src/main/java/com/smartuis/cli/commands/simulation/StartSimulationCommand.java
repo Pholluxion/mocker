@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 @Component
 @Command(
         name = "start",
+        aliases = {"run"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "Start a simulation."
@@ -34,8 +35,11 @@ public class StartSimulationCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+
+        var url = baseUrl + "/api/v1/simulation/start/" + id;
+
         ResponseEntity<String> response = restTemplate
-                .exchange(baseUrl + "/api/v1/simulation/start/" + id, HttpMethod.GET,null, String.class);
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Simulation started successfully.");

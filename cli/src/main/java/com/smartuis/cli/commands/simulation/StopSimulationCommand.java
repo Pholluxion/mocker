@@ -18,7 +18,7 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true,
         description = "Stop a simulation."
 )
-public class StopSimulationCommand  implements Callable<Integer> {
+public class StopSimulationCommand implements Callable<Integer> {
     @Value("${mocker.url}")
     private String baseUrl;
     private final RestTemplate restTemplate;
@@ -32,8 +32,11 @@ public class StopSimulationCommand  implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+
+        var url = baseUrl + "/api/v1/simulation/stop/" + id;
+
         ResponseEntity<String> response = restTemplate
-                .exchange(baseUrl + "/api/v1/simulation/stop/" + id, HttpMethod.GET,null, String.class);
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Simulation stopped successfully.");

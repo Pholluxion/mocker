@@ -1,0 +1,24 @@
+{
+  "values": [
+    {
+      "type": "boolean",
+      "name": "{{BooleanGenerator1}}",
+      "probability": 0.5
+    },
+    {
+      "type": "boolean",
+      "name": "{{BooleanGenerator2}}",
+      "probability": 0.5
+    },
+    {
+      "type": "boolean",
+      "name": "{{BooleanGenerator3}}",
+      "probability": 0.5
+    },
+    {
+      "type": "boolean",
+      "name": "{{BooleanGenerator4}}",
+      "probability": 0.5
+    }
+  ]
+}

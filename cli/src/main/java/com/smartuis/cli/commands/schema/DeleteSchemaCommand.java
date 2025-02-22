@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 @Component
 @Command(
         name = "delete",
+        aliases = {"d"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "Delete a schema."
@@ -37,8 +38,10 @@ public class DeleteSchemaCommand implements Callable<Integer> {
     @Override
     public Integer call() {
 
+        var url = baseUrl + "/api/v1/schema/" + id;
+
         ResponseEntity<String> response = restTemplate
-                .exchange(baseUrl + "/api/v1/schema/" + id,HttpMethod.DELETE,null, String.class);
+                .exchange(url, HttpMethod.DELETE, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Schema deleted successfully.");
