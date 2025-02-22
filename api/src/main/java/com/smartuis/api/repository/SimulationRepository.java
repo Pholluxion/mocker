@@ -1,7 +1,5 @@
 package com.smartuis.api.repository;
 
-import com.smartuis.api.config.amqp.AmqpConnector;
-import com.smartuis.api.config.mqtt.MqttConnector;
 import com.smartuis.api.dtos.SimulationDTO;
 import com.smartuis.api.models.schema.Schema;
 import com.smartuis.api.simulator.Simulator;
@@ -18,32 +16,23 @@ import java.util.Map;
 @Repository
 public class SimulationRepository {
 
-    private final Simulator simulator;
-    private final Map<String, StateMachine<Simulator.State, Simulator.Event>> stateMachines;
+    private final Map<String, Simulator> simulatorMap;
 
-    public SimulationRepository(Simulator simulator) {
-        this.simulator = simulator;
-        this.stateMachines = new HashMap<>();
+    public SimulationRepository() {
+        this.simulatorMap = new HashMap<>();
     }
 
     public Mono<SimulationDTO> create(Schema schema) {
         try {
-            var stateMachine = simulator.createStateMachine();
-            var map = new HashMap<>();
 
-            map.put("schema", schema);
-            map.put("isRunning", false);
-            map.put("name", schema.getName());
-            map.put("mqtt", new MqttConnector());
-            map.put("amqp", new AmqpConnector());
+            var simulator = new Simulator(schema);
 
-            stateMachine.getExtendedState().getVariables().putAll(map);
-            stateMachines.putIfAbsent(schema.getId(), stateMachine);
+            simulatorMap.putIfAbsent(schema.getId(), simulator);
 
             var simulationDTO = new SimulationDTO(
                     schema.getId(),
                     schema.getName(),
-                    stateMachine.getState().getId().name()
+                    simulator.getState().name()
             );
 
             return Mono.just(simulationDTO);
@@ -54,30 +43,28 @@ public class SimulationRepository {
     }
 
     public Flux<SimulationDTO> findAll() {
-        return Flux.fromIterable(stateMachines.entrySet())
+        return Flux.fromIterable(simulatorMap.entrySet())
                 .map(entry -> {
                     var id = entry.getKey();
-                    var state = entry.getValue().getState().getId().name();
-                    var variables = getVariables(entry.getValue());
-                    var name = (String) variables.get("name");
+                    var state = entry.getValue().getState().name();
+                    var name = entry.getValue().getSchema().getName();
                     return new SimulationDTO(id, name, state);
                 });
     }
 
     public Mono<SimulationDTO> getById(String id) {
-        return Mono.justOrEmpty(stateMachines.get(id))
-                .map(stateMachine -> {
-                    var state = stateMachine.getState().getId().name();
-                    var variables = getVariables(stateMachine);
-                    var name = (String) variables.get("name");
+        return Mono.justOrEmpty(simulatorMap.get(id))
+                .map(simulator -> {
+                    var state = simulator.getState().name();
+                    var name = simulator.getSchema().getName();
                     return new SimulationDTO(id, name, state);
                 });
     }
 
     public Mono<Boolean> delete(String id) {
-        return Mono.justOrEmpty(stateMachines.remove(id))
-                .map(stateMachine -> {
-                    stateMachine.stopReactively();
+        return Mono.justOrEmpty(simulatorMap.remove(id))
+                .map(simulator -> {
+                    simulator.getStateMachine().stopReactively();
                     return true;
                 });
     }
@@ -86,45 +73,41 @@ public class SimulationRepository {
     public Flux<String> logs(String id) {
         return Flux.interval(Duration.ofSeconds(1))
                 .map(i -> {
-                    var stateMachine = stateMachines.get(id);
+                    var simulator = simulatorMap.get(id);
 
-                    if (stateMachine == null) {
-                        return "";
-                    }
+                    var log = (String) getVariables(simulator.getStateMachine()).get("log");
 
-                    var variables = getVariables(stateMachine);
-                    var log = (String) variables.get("log");
+                    return log != null ? log : "";
 
-                    if (log == null) {
-                        return "";
-                    }
-
-                    return (String) variables.get("log");
                 });
     }
 
     public Mono<SimulationDTO> handleEvent(String id, Simulator.Event event) {
-        var stateMachine = stateMachines.get(id);
+        var simulator = simulatorMap.get(id);
 
-        if (stateMachine == null) {
+        if (simulator == null) {
             return Mono.empty();
         }
 
-        stateMachine.sendEvent(Mono.just(MessageBuilder.withPayload(event).build())).subscribe();
+        simulator.getStateMachine()
+                .sendEvent(Mono.just(MessageBuilder.withPayload(event).build()))
+                .subscribe();
 
-        var name = (String) getVariables(stateMachine).get("name");
-        var currentState = stateMachine.getState().getId().name();
+        var name = simulator.getSchema().getName();
+        var currentState = simulator.getState().name();
 
         if (event == Simulator.Event.KILL) {
-            stateMachine.stopReactively();
-            stateMachines.remove(id);
+            simulator.getStateMachine().stopReactively();
+            simulatorMap.remove(id);
         }
 
         return Mono.just(new SimulationDTO(id, name, currentState));
     }
 
     private Map<Object, Object> getVariables(StateMachine<Simulator.State, Simulator.Event> stateMachine) {
-        return stateMachine.getExtendedState().getVariables();
+        return stateMachine
+                .getExtendedState()
+                .getVariables();
     }
 
 
