@@ -29,6 +29,20 @@ public class YamlToJsonConverter {
      */
     public String convertYamlToJson(String yamlFilePath) throws IOException {
         JsonNode yamlTree = yamlMapper.readTree(new File(yamlFilePath));
-        return jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(yamlTree);
+        return jsonMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(yamlTree);
+    }
+
+    /**
+     * Reads a JSON file and returns its content as a pretty-printed JSON string.
+     *
+     * @param jsonFilePath Path to the JSON file.
+     * @return String Pretty-printed JSON representation of the file content.
+     * @throws IOException If an error occurs while reading the JSON file.
+     */
+    public String readJson(String jsonFilePath) throws IOException {
+        JsonNode jsonTree = jsonMapper.readTree(new File(jsonFilePath));
+        return jsonMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(jsonTree);
     }
 }

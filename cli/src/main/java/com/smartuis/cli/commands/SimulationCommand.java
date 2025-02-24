@@ -9,6 +9,7 @@ import picocli.CommandLine.Command;
 @Command(
         name = "simulation",
         version = "1.0.0",
+        aliases = {"sim"},
         mixinStandardHelpOptions = true,
         description = "Manage simulations.",
         subcommands = {

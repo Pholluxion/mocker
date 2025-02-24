@@ -14,7 +14,8 @@ import java.util.concurrent.Callable;
 
 @Component
 @Command(
-        name = "list-all",
+        name = "list",
+        aliases = {"ls"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "List all schemas."
@@ -36,29 +37,30 @@ public class ListSchemaCommand implements Callable<Integer> {
     @Override
     public Integer call() throws JsonProcessingException {
 
+        var url = baseUrl + "/api/v1/schema/short";
 
-
-        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/api/v1/schema/short", HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-             System.out.println("-".repeat(25) + "---" + "-".repeat(30));
-             System.out.printf("%-25s | %-30s%n", "ID", "Name");
-             System.out.println("-".repeat(25) + "---" + "-".repeat(30));
+            System.out.println("-".repeat(25) + "---" + "-".repeat(30));
+            System.out.printf("%-25s | %-30s%n", "ID", "Name");
+            System.out.println("-".repeat(25) + "---" + "-".repeat(30));
 
             objectMapper.reader()
                     .readTree(response.getBody())
                     .forEach(schema -> printSchema(schema.get("id").asText(), schema.get("name").asText()));
 
-             System.out.println("-".repeat(25) + "---" + "-".repeat(30));
+            System.out.println("-".repeat(25) + "---" + "-".repeat(30));
         } else {
-             System.out.println("Failed to list schemas.");
+            System.out.println("Failed to list schemas.");
         }
 
         return 0;
     }
 
 
-    private void printSchema(String id,String name) {
-             System.out.printf("%-25s | %-30s%n", id, name);
+    private void printSchema(String id, String name) {
+        System.out.printf("%-25s | %-30s%n", id, name);
     }
 }

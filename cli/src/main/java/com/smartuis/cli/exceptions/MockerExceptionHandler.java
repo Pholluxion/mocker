@@ -23,7 +23,7 @@ public class MockerExceptionHandler implements IExecutionExceptionHandler {
                 return 2;
             }
             case RestClientException restClientException -> {
-                cmd.getErr().println("Error " + restClientException.getCause().getMessage());
+                cmd.getErr().println(restClientException.getCause().getMessage());
                 return 3;
             }
             case null, default -> {

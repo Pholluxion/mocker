@@ -14,6 +14,7 @@ import java.util.concurrent.Callable;
 @Component
 @Command(
         name = "kill",
+        aliases = {"k"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "Kill a simulation."
@@ -33,8 +34,11 @@ public class KillSimulationCommand implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+
+        var url = baseUrl + "/api/v1/simulation/kill/" + id;
+
         ResponseEntity<String> response = restTemplate
-                .exchange(baseUrl + "/api/v1/simulation/kill/" + id, HttpMethod.GET,null, String.class);
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Simulation killed successfully.");

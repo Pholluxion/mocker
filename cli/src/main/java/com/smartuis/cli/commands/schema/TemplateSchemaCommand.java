@@ -12,30 +12,33 @@ import java.util.concurrent.Callable;
 
 @Component
 @Command(
-        name = "create",
-        aliases = {"c"},
+        name = "template",
+        aliases = {"t"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
-        description = "Create a new schema."
+        description = "Set the schema template."
 )
-public class CreateSchemaCommand implements Callable<Integer> {
+public class TemplateSchemaCommand implements Callable<Integer> {
 
     @Value("${mocker.url}")
     private String baseUrl;
     private final RestTemplate restTemplate;
     private final YamlToJsonConverter converter;
 
-    @Option(names = {"-f", "--file"}, description = "Path to the YAML file.", required = true)
+    @Option(names = {"-f", "--file"}, description = "Path to the template file.", required = true)
     private String path;
 
-    public CreateSchemaCommand(RestTemplate restTemplate, YamlToJsonConverter converter) {
+    @Option(names = {"-i", "--id"}, description = "Schema ID.", required = true)
+    private String id;
+
+    public TemplateSchemaCommand(RestTemplate restTemplate, YamlToJsonConverter converter) {
         this.restTemplate = restTemplate;
         this.converter = converter;
     }
 
+
     @Override
     public Integer call() throws Exception {
-
         String json = converter.convertYamlToJson(path);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -43,15 +46,15 @@ public class CreateSchemaCommand implements Callable<Integer> {
 
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
-        var url = baseUrl + "/api/v1/schema";
+        var url = baseUrl + "/api/v1/schema/template/" + id;
 
         ResponseEntity<String> response = restTemplate
-                .exchange(url, HttpMethod.POST, entity, String.class);
+                .exchange(url, HttpMethod.PUT, entity, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Schema created successfully.");
+            System.out.println("Schema template created successfully.");
         } else {
-            System.out.println("Failed to create schema.");
+            System.out.println("Error creating schema template.");
         }
 
         return 0;

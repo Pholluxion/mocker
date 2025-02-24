@@ -12,7 +12,8 @@ import java.util.concurrent.Callable;
 
 @Component
 @CommandLine.Command(
-        name = "list-all",
+        name = "list",
+        aliases = {"ls"},
         version = "1.0.0",
         mixinStandardHelpOptions = true,
         description = "List all simulations."
@@ -34,11 +35,14 @@ public class ListSimulationCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
 
-        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/api/v1/simulation", HttpMethod.GET, null, String.class);
+        var url = baseUrl + "/api/v1/simulation";
+
+        ResponseEntity<String> response = restTemplate
+                .exchange(url, HttpMethod.GET, null, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("-".repeat(25) + "---" + "-".repeat(30) + "---" + "-".repeat(10));
-            System.out.printf("%-25s | %-30s | %-10s%n", "ID", "Name","State");
+            System.out.printf("%-25s | %-30s | %-10s%n", "ID", "Name", "State");
             System.out.println("-".repeat(25) + "---" + "-".repeat(30) + "---" + "-".repeat(10));
 
             objectMapper.reader()
