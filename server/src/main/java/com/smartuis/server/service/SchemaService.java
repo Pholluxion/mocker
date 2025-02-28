@@ -16,6 +16,6 @@ public interface SchemaService {
 
     Mono<Boolean> delete(String id);
 
-    Mono<Schema> existsByName(String id);
+    Mono<Boolean> existsSimulation(String id);
 
 }

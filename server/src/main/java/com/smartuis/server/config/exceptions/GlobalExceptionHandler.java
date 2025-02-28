@@ -23,39 +23,27 @@ public class GlobalExceptionHandler {
     public List<ErrorDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
         return ex.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .map(message -> ErrorDTO.builder()
-                        .error("Validation Error")
-                        .message(message)
-                        .build())
+                .map(message -> new ErrorDTO("Validation Error", message))
                 .toList();
     }
 
     @ExceptionHandler(InvalidTypeIdException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleInvalidTypeIdException(InvalidTypeIdException ex, WebRequest request) {
-        return ErrorDTO.builder()
-                .error("Invalid Type ID")
-                .message("Invalid type id: " + ex.getTypeId())
-                .build();
+        return new ErrorDTO("Invalid Type ID", "Invalid type id: " + ex.getTypeId());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        return ErrorDTO.builder()
-                .error("Illegal Argument")
-                .message(ex.getMessage())
-                .build();
+        return new ErrorDTO("Illegal Argument", ex.getMessage());
     }
 
 
     @ExceptionHandler(MustacheException.Context.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO handleMustacheException(MustacheException ex, WebRequest request) {
-        return ErrorDTO.builder()
-                .error("Mustache Rendering Error")
-                .message(ex.getMessage())
-                .build();
+        return new ErrorDTO("Mustache Rendering Error", ex.getMessage());
     }
 
 

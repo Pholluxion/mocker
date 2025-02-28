@@ -7,5 +7,4 @@ package com.smartuis.server.dtos;
  * @param name  the name of the simulation
  * @param state the current state of the simulation
  */
-public record SimulationDTO(String id, String name, String state) {
-}
+public record SimulationDTO(String id, String name, String state) {}
