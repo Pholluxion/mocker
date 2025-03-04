@@ -6,6 +6,7 @@ import com.smartuis.server.models.generators.random.RandomInteger;
 import com.smartuis.server.models.generators.random.BooleanGenerator;
 import com.smartuis.server.models.generators.continuous.*;
 import com.smartuis.server.models.generators.discrete.*;
+import com.smartuis.server.models.generators.random.StringGenerator;
 import com.smartuis.server.models.interfaces.IGenerator;
 import com.smartuis.server.models.interfaces.IProtocol;
 import com.smartuis.server.models.interfaces.ISampler;
@@ -50,6 +51,7 @@ public class JacksonHints implements RuntimeHintsRegistrar {
         hints.reflection().registerType(BooleanGenerator.class, this::registerMembers);
         hints.reflection().registerType(RandomDouble.class, this::registerMembers);
         hints.reflection().registerType(RandomInteger.class, this::registerMembers);
+        hints.reflection().registerType(StringGenerator.class, this::registerMembers);
 
         hints.reflection().registerType(ExponentialDistribution.class, this::registerMembers);
         hints.reflection().registerType(LogNormalDistribution.class, this::registerMembers);
