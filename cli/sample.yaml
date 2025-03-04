@@ -1,12 +1,13 @@
-name: Test Simulation 41
+---
+name: Test
 protocols:
   - type: mqtt
     host: localhost
     port: 1883
     topic: v1/devices/me/telemetry
-    clientId: egz9bshew6obwtx7wsr4
-    username: 7t8phvdm4govtgocmsdg
-    password: duojptfdooj32fdfcuzw
+    clientId: qsklcjz3kvw7zv3vuonj
+    username: 2wygvpvzeg35muvugcgi
+    password: 0sta4flrmywi1i2oki1b
   - type: amqp
     host: localhost
     port: 5672
@@ -15,19 +16,69 @@ protocols:
     exchange: simulation_exchange
     routingKey: simulation.key
 sampler:
-  type: step
-  duration: 0
-  interval: 500
+  type: sequential
+  steps:
+    - type: step
+      duration: 10000
+      interval: 1000
+    - type: step
+      duration: 5000
+      interval: 5000
+    - type: step
+      duration: 0
+      interval: 1000
 generators:
   - type: boolean
-    name: BooleanGenerator1
+    name: BooleanGenerator
     probability: 0.5
-  - type: boolean
-    name: BooleanGenerator2
+  - type: random_integer
+    name: RandomInteger
+    min: 10
+    max: 100
+  - type: random_double
+    name: RandomDouble
+    min: 10
+    max: 100
+    decimals: 3
+  - type: continuous_exponential
+    name: ExponentialDistribution
+    lambda: 1
+    decimals: 2
+  - type: continuous_log_normal
+    name: LogNormalDistribution
+    mean: 2
+    stddev: 0.5
+    decimals: 2
+  - type: continuous_normal
+    name: NormalDistribution
+    mean: 10
+    stddev: 2
+    decimals: 2
+  - type: continuous_triangular
+    name: TriangularDistribution
+    min: 10
+    max: 100
+    mode: 55
+    decimals: 3
+  - type: continuous_uniform
+    name: UniformContinuousDistribution
+    min: 10
+    max: 100
+    decimals: 3
+  - type: discrete_bernoulli
+    name: BernoulliDistribution
     probability: 0.5
-  - type: boolean
-    name: BooleanGenerator3
+  - type: discrete_binomial
+    name: BinomialDistribution
+    trials: 3
     probability: 0.5
-  - type: boolean
-    name: BooleanGenerator4
+  - type: discrete_geometric
+    name: GeometricDistribution
     probability: 0.5
+  - type: discrete_poisson
+    name: PoissonDistribution
+    lambda: 1
+  - type: discrete_uniform
+    name: UniformDiscreteDistribution
+    min: 10
+    max: 100

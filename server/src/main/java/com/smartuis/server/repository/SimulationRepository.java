@@ -69,9 +69,13 @@ public class SimulationRepository {
                 });
     }
 
+    public Mono<Boolean> exists(String id) {
+        return Mono.just(simulatorMap.containsKey(id));
+    }
 
-    public Flux<String> logs(String id) {
-        return Flux.interval(Duration.ofSeconds(1))
+
+    public Flux<String> logs(String id, int interval) {
+        return Flux.interval(Duration.ofSeconds(interval))
                 .map(i -> {
                     var simulator = simulatorMap.get(id);
 

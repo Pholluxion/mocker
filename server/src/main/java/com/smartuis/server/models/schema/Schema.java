@@ -42,7 +42,7 @@ public class Schema {
     public Map<String, Object> generate() {
         return this.generators
                 .stream()
-                .collect(Collectors.toMap(IGenerator::name, IGenerator::generate));
+                .collect(Collectors.toMap(IGenerator::name, IGenerator::sample));
     }
 
     public IProtocol getProtocolByType(String type) {
