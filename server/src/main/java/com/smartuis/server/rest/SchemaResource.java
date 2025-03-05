@@ -129,7 +129,7 @@ public Flux<List<SchemaDTO>> listShortStream(@RequestParam int interval) {
      * @return a Mono containing the ResponseEntity with the updated Schema or a not found status
      */
     @PutMapping("/template/{id}")
-    public Mono<ResponseEntity<Schema>> template(@PathVariable String id, @RequestBody Map<String, Object> template) {
+    public Mono<ResponseEntity<Schema>> template(@PathVariable String id, @RequestBody String template) {
         return schemaService.template(id, template)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

@@ -1,6 +1,6 @@
 package com.smartuis.cli.commands.schema;
 
-import com.smartuis.cli.utils.YamlToJsonConverter;
+import com.smartuis.cli.utils.Converter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -23,12 +23,12 @@ public class CreateSchemaCommand implements Callable<Integer> {
     @Value("${mocker.url}")
     private String baseUrl;
     private final RestTemplate restTemplate;
-    private final YamlToJsonConverter converter;
+    private final Converter converter;
 
     @Option(names = {"-f", "--file"}, description = "Path to the YAML file.", required = true)
     private String path;
 
-    public CreateSchemaCommand(RestTemplate restTemplate, YamlToJsonConverter converter) {
+    public CreateSchemaCommand(RestTemplate restTemplate, Converter converter) {
         this.restTemplate = restTemplate;
         this.converter = converter;
     }
