@@ -5,8 +5,8 @@ protocols:
     port: 1883
     topic: device-messages
     clientId: mocker-client-1
-#    username: 2wygvpvzeg35muvugcgi
-#    password: 0sta4flrmywi1i2oki1b
+    username: user
+    password: password
 #  - type: amqp
 #    host: localhost
 #    port: 5672

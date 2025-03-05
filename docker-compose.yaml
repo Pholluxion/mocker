@@ -13,7 +13,3 @@ services:
 networks:
   smart_campus_core_iot_campus_uis:
     external: true
-
-volumes:
-  mocker-data:
-    driver: local

@@ -198,7 +198,7 @@ public class Simulator {
     private String processSample() {
 
         Map<String, Object> data = schema.generate();
-        String template = (String) schema.getTemplate();
+        String template = schema.getTemplate();
 
         return (template == null) ?
                 data.toString() :
