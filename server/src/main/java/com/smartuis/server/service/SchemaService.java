@@ -12,7 +12,7 @@ public interface SchemaService {
 
     Flux<Schema> findAll();
 
-    Mono<Schema> template(String id, Object template);
+    Mono<Schema> template(String id, String template);
 
     Mono<Boolean> delete(String id);
 

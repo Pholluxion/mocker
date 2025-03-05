@@ -1,5 +1,7 @@
 package com.smartuis.server.simulator;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samskivert.mustache.Mustache;
 
 import com.smartuis.server.config.amqp.AmqpConnector;
@@ -29,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Simulator {
 
     public enum State {CREATED, RUNNING, STOPPED, KILLED}
+
     public enum Event {START, STOP, KILL}
 
     private final MqttConnector mqttConnector;
@@ -193,14 +196,14 @@ public class Simulator {
 
 
     private String processSample() {
- 
+
         Map<String, Object> data = schema.generate();
-        Object template = schema.getTemplate();
+        String template = (String) schema.getTemplate();
 
         return (template == null) ?
                 data.toString() :
                 Mustache.compiler()
-                        .compile(template.toString())
+                        .compile(template)
                         .execute(data);
 
 

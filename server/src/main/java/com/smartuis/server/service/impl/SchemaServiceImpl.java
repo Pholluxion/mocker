@@ -64,7 +64,7 @@ public class SchemaServiceImpl implements SchemaService {
     }
 
     @Override
-    public Mono<Schema> template(String id, Object template) {
+    public Mono<Schema> template(String id, String template) {
         return schemaRepository.findById(id)
                 .map(schema -> {
                     schema.setTemplate(template);

@@ -37,7 +37,7 @@ public class Schema {
     @Size(min = 1, message = "At least one generator must be defined.")
     List<IGenerator<?>> generators;
 
-    Object template;
+    String template;
 
     public Map<String, Object> generate() {
         return this.generators

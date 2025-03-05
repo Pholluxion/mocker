@@ -1,19 +1,19 @@
 name: Test
 protocols:
   - type: mqtt
-    host: localhost
+    host: mosquitto
     port: 1883
-    topic: v1/devices/me/telemetry
-    clientId: qsklcjz3kvw7zv3vuonj
-    username: 2wygvpvzeg35muvugcgi
-    password: 0sta4flrmywi1i2oki1b
-  - type: amqp
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    exchange: simulation_exchange
-    routingKey: simulation.key
+    topic: device-messages
+    clientId: mocker-client-1
+#    username: 2wygvpvzeg35muvugcgi
+#    password: 0sta4flrmywi1i2oki1b
+#  - type: amqp
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#    exchange: simulation_exchange
+#    routingKey: simulation.key
 sampler:
   type: sequential
   steps:
@@ -85,9 +85,9 @@ generators:
     name: StringWeightedGenerator
     sampling: weighted
     values:
-      - apple
-      - banana
-      - cherry
+      - test-1
+      - test-2
+      - test-3
     weights:
       - 0.5
       - 0.3
@@ -96,8 +96,8 @@ generators:
     name: StringRandomGenerator
     sampling: random
     values:
-      - apple
-      - banana
-      - cherry
+      - test-1
+      - test-2
+      - test-3
 
 

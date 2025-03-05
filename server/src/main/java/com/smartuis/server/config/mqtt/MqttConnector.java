@@ -116,12 +116,16 @@ public class MqttConnector {
             return;
         }
 
-        MqttMessage message = new MqttMessage(payload.getBytes());
+        MqttMessage message = new MqttMessage();
         message.setQos(1);
         message.setRetained(false);
+        message.setPayload(payload.getBytes());
 
         try {
             client.publish(this.protocol.topic(), message);
+
+            log.info(payload);
+
         } catch (MqttException e) {
             printError(e);
         }
