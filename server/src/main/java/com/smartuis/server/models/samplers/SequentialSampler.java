@@ -9,13 +9,12 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
-public record SequentialSampler(List<StepSampler> steps) implements ISampler {
+public record SequentialSampler(List<ISampler> steps) implements ISampler {
 
 
     @JsonCreator
-    public SequentialSampler(
-            @JsonProperty("steps") List<StepSampler> steps
-    ) {
+    public SequentialSampler(@JsonProperty("steps") List<ISampler> steps) {
+
         if (steps == null || steps.isEmpty()) {
             throw new IllegalArgumentException("sequential sampler requires steps");
         }
@@ -25,7 +24,6 @@ public record SequentialSampler(List<StepSampler> steps) implements ISampler {
 
     @Override
     public Flux<Long> sample() {
-        return Flux.fromIterable(steps)
-                   .concatMap(StepSampler::sample);
+        return Flux.fromIterable(steps).concatMap(ISampler::sample);
     }
 }

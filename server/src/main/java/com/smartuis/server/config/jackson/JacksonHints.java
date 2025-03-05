@@ -1,5 +1,6 @@
 package com.smartuis.server.config.jackson;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.smartuis.server.dtos.SchemaDTO;
 import com.smartuis.server.models.generators.random.RandomDouble;
 import com.smartuis.server.models.generators.random.RandomInteger;
@@ -12,8 +13,7 @@ import com.smartuis.server.models.interfaces.IProtocol;
 import com.smartuis.server.models.interfaces.ISampler;
 import com.smartuis.server.models.protocols.AmqpProtocol;
 import com.smartuis.server.models.protocols.MqttProtocol;
-import com.smartuis.server.models.samplers.SequentialSampler;
-import com.smartuis.server.models.samplers.StepSampler;
+import com.smartuis.server.models.samplers.*;
 import com.smartuis.server.models.schema.Schema;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -46,6 +46,14 @@ public class JacksonHints implements RuntimeHintsRegistrar {
         /// Samplers
         hints.reflection().registerType(StepSampler.class, this::registerMembers);
         hints.reflection().registerType(SequentialSampler.class, this::registerMembers);
+        hints.reflection().registerType(BurstSampler.class, this::registerMembers);
+        hints.reflection().registerType(DelaySampler.class, this::registerMembers);
+        hints.reflection().registerType(CountSampler.class, this::registerMembers);
+        hints.reflection().registerType(RandomSampler.class, this::registerMembers);
+        hints.reflection().registerType(LoopSampler.class, this::registerMembers);
+        hints.reflection().registerType(PulseSampler.class, this::registerMembers);
+        hints.reflection().registerType(TrafficSpikeSampler.class, this::registerMembers);
+        hints.reflection().registerType(WindowSampler.class, this::registerMembers);
 
         /// Generators
         hints.reflection().registerType(BooleanGenerator.class, this::registerMembers);
