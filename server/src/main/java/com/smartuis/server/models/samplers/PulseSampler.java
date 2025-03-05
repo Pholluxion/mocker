@@ -24,9 +24,9 @@ public record PulseSampler(Integer pulse, Integer idle) implements ISampler {
 
     @Override
     public Flux<Long> sample() {
-        return Flux.concat(
-                Flux.just(1L).delayElements(Duration.ofMillis(pulse)),
-                Flux.just(0L).delayElements(Duration.ofMillis(idle))
-        ).repeat();
+        return Flux.just(1L)
+                .delayElements(Duration.ofMillis(pulse))
+                .repeatWhen(flux -> flux.delayElements(Duration.ofMillis(idle)));
     }
+
 }

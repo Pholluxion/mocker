@@ -3,7 +3,7 @@
   "protocols": [
     {
       "type": "mqtt",
-      "host": "localhost",
+      "host": "mosquitto",
       "port": 1883,
       "topic": "device-messages",
       "clientId": "mocker-client-1",
