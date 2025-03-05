@@ -54,9 +54,9 @@
       },
       {
         "type": "traffic-spike",
-        "normal": 1000,
-        "spike": 100,
-        "duration": 5000
+        "normal": 10000,
+        "spike": 1000,
+        "duration": 50000
       },
       {
         "type": "window",
@@ -67,6 +67,10 @@
     ]
   },
   "generators": [
+    {
+      "type": "timestamp",
+      "name": "TimestampGenerator"
+    },
     {
       "type": "boolean",
       "name": "BooleanGenerator",

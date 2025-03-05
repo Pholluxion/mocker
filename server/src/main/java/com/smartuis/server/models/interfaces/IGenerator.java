@@ -2,20 +2,18 @@ package com.smartuis.server.models.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.smartuis.server.models.generators.random.RandomDouble;
-import com.smartuis.server.models.generators.random.RandomInteger;
-import com.smartuis.server.models.generators.random.BooleanGenerator;
+import com.smartuis.server.models.generators.random.*;
 import com.smartuis.server.models.generators.continuous.*;
 import com.smartuis.server.models.generators.discrete.*;
-import com.smartuis.server.models.generators.random.StringGenerator;
 
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BooleanGenerator.class, name = "boolean"),
-        @JsonSubTypes.Type(value = RandomDouble.class, name = "random_double"),
-        @JsonSubTypes.Type(value = RandomInteger.class, name = "random_integer"),
+        @JsonSubTypes.Type(value = DoubleGenerator.class, name = "random_double"),
+        @JsonSubTypes.Type(value = IntegerGenerator.class, name = "random_integer"),
         @JsonSubTypes.Type(value = StringGenerator.class, name = "string"),
+        @JsonSubTypes.Type(value = TimestampGenerator.class, name = "timestamp"),
 
         @JsonSubTypes.Type(value = ExponentialDistribution.class, name = "continuous_exponential"),
         @JsonSubTypes.Type(value = LogNormalDistribution.class, name = "continuous_log_normal"),

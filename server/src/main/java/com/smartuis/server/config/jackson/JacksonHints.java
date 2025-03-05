@@ -1,13 +1,9 @@
 package com.smartuis.server.config.jackson;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.smartuis.server.dtos.SchemaDTO;
-import com.smartuis.server.models.generators.random.RandomDouble;
-import com.smartuis.server.models.generators.random.RandomInteger;
-import com.smartuis.server.models.generators.random.BooleanGenerator;
+import com.smartuis.server.models.generators.random.*;
 import com.smartuis.server.models.generators.continuous.*;
 import com.smartuis.server.models.generators.discrete.*;
-import com.smartuis.server.models.generators.random.StringGenerator;
 import com.smartuis.server.models.interfaces.IGenerator;
 import com.smartuis.server.models.interfaces.IProtocol;
 import com.smartuis.server.models.interfaces.ISampler;
@@ -57,9 +53,10 @@ public class JacksonHints implements RuntimeHintsRegistrar {
 
         /// Generators
         hints.reflection().registerType(BooleanGenerator.class, this::registerMembers);
-        hints.reflection().registerType(RandomDouble.class, this::registerMembers);
-        hints.reflection().registerType(RandomInteger.class, this::registerMembers);
+        hints.reflection().registerType(DoubleGenerator.class, this::registerMembers);
+        hints.reflection().registerType(IntegerGenerator.class, this::registerMembers);
         hints.reflection().registerType(StringGenerator.class, this::registerMembers);
+        hints.reflection().registerType(TimestampGenerator.class, this::registerMembers);
 
         hints.reflection().registerType(ExponentialDistribution.class, this::registerMembers);
         hints.reflection().registerType(LogNormalDistribution.class, this::registerMembers);
