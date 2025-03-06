@@ -18,4 +18,8 @@ public interface SchemaService {
 
     Mono<Boolean> existsSimulation(String id);
 
+    Mono<Boolean> isClientMqttValid(Schema schema);
+
+    Mono<Boolean> isNameValid(String name);
+
 }
