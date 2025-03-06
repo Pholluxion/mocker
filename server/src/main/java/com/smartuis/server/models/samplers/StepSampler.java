@@ -12,10 +12,7 @@ import java.time.Duration;
 public record StepSampler(Integer duration, Integer interval) implements ISampler {
 
     @JsonCreator
-    public StepSampler(
-            @JsonProperty("duration") Integer duration,
-            @JsonProperty("interval") Integer interval
-    ) {
+    public StepSampler(@JsonProperty("duration") Integer duration, @JsonProperty("interval") Integer interval) {
 
         if (duration == null || duration < 0) {
             throw new IllegalArgumentException("step sampler requires duration");

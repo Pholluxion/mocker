@@ -37,12 +37,12 @@ public class Schema {
     @Size(min = 1, message = "At least one generator must be defined.")
     List<IGenerator<?>> generators;
 
-    Object template;
+    String template;
 
     public Map<String, Object> generate() {
         return this.generators
                 .stream()
-                .collect(Collectors.toMap(IGenerator::name, IGenerator::generate));
+                .collect(Collectors.toMap(IGenerator::name, IGenerator::sample));
     }
 
     public IProtocol getProtocolByType(String type) {

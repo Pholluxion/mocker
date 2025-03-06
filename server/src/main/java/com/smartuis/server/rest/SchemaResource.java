@@ -6,13 +6,17 @@ import com.smartuis.server.models.schema.Schema;
 
 import jakarta.validation.Valid;
 
+import org.reactivestreams.Publisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * SchemaResource is a REST controller that provides endpoints for managing schemas.
@@ -76,8 +80,34 @@ public class SchemaResource {
      */
     @GetMapping("/short")
     public Mono<ResponseEntity<Flux<SchemaDTO>>> listShort() {
-        return Mono.just(ResponseEntity.ok(schemaService.findAll().map(SchemaDTO::from)));
+        return Mono.just(ResponseEntity.ok(schemaService.findAll().flatMap(
+                schema -> schemaService.existsSimulation(schema.getId())
+                        .defaultIfEmpty(false)
+                        .map(created -> new SchemaDTO(schema.getId(), schema.getName(), created))
+        )));
     }
+
+   /**
+ * Streams a list of SchemaDTOs at a specified interval.
+ *
+ * @param interval the interval in seconds at which to stream the list of SchemaDTOs
+ * @return a Flux containing the list of SchemaDTOs
+ */
+@GetMapping(value = "/short/stream", produces = "text/event-stream")
+public Flux<List<SchemaDTO>> listShortStream(@RequestParam int interval) {
+
+    if (interval < 1 ) {
+        interval = 1;
+    }
+
+    return Flux.interval(Duration.ofSeconds(interval))
+            .flatMap(i -> schemaService.findAll().flatMap(
+                    schema -> schemaService.existsSimulation(schema.getId())
+                            .defaultIfEmpty(false)
+                            .map(created -> new SchemaDTO(schema.getId(), schema.getName(), created))
+            ).collectList());
+
+}
 
     /**
      * Deletes a schema by its ID.
@@ -94,12 +124,12 @@ public class SchemaResource {
     /**
      * Updates the template of a schema by its ID.
      *
-     * @param id the ID of the schema to update
+     * @param id       the ID of the schema to update
      * @param template the new template data
      * @return a Mono containing the ResponseEntity with the updated Schema or a not found status
      */
     @PutMapping("/template/{id}")
-    public Mono<ResponseEntity<Schema>> template(@PathVariable String id, @RequestBody Map<String, Object> template) {
+    public Mono<ResponseEntity<Schema>> template(@PathVariable String id, @RequestBody String template) {
         return schemaService.template(id, template)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

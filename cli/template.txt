@@ -1,0 +1,23 @@
+{
+  "deviceUUID": "1",
+  "timeStamp": "{{TimestampGenerator}}",
+  "topic": "device-message",
+  "alert": {{BooleanGenerator}},
+  "status": "OK",
+  "values": {
+    "Temperature": {{RandomInteger}},
+    "Pressure": {{RandomDouble}},
+    "Humidity": {{ExponentialDistribution}},
+    "WindSpeed": {{LogNormalDistribution}},
+    "WindDirection": {{NormalDistribution}},
+    "Rainfall": {{TriangularDistribution}},
+    "Visibility": {{UniformContinuousDistribution}},
+    "CloudCover": {{BernoulliDistribution}},
+    "DewPoint": {{BinomialDistribution}},
+    "SolarRadiation": {{GeometricDistribution}},
+    "UVIndex": {{PoissonDistribution}},
+    "Ozone": {{UniformDiscreteDistribution}},
+    "Status": {{StringWeightedGenerator}},
+    "Alert": {{StringRandomGenerator}}
+  }
+}

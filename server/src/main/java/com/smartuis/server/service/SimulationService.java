@@ -12,7 +12,7 @@ public interface SimulationService {
     Flux<SimulationDTO> findAll();
     Mono<Boolean> delete(String id);
     Mono<SimulationDTO> handleEvent(String id, Simulator.Event event);
-    Flux<String> logs(String id);
+    Flux<String> logs(String id,int interval);
 
 
 }
