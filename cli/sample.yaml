@@ -1,103 +1,151 @@
+# Simulation name
 name: Test
+
+# Communication protocols to send the generated data
 protocols:
-  - type: mqtt
-    host: mosquitto
-    port: 1883
-    topic: device-messages
-    clientId: mocker-client-1
-    username: user
-    password: password
-#  - type: amqp
-#    host: localhost
-#    port: 5672
-#    username: guest
-#    password: guest
-#    exchange: simulation_exchange
-#    routingKey: simulation.key
+  - type: mqtt  # MQTT protocol
+    host: localhost  # MQTT broker address
+    port: 1883  # MQTT default port
+    topic: device-messages  # Topic where messages will be published
+    clientId: mocker-client-1  # Unique client identifier
+    username: user  # Authentication username
+    password: password  # Authentication password
+
+  - type: amqp  # AMQP protocol
+    host: localhost  # AMQP server address
+    port: 5672  # AMQP default port
+    username: guest  # Authentication username
+    password: guest  # Authentication password
+    exchange: simulation_exchange  # Exchange where messages are published
+    routingKey: simulation.key  # Routing key
+
+# Sampling strategy defining how and when data is generated
 sampler:
-  type: sequential
+  type: sequential  # Executes steps one after another
   steps:
-    - type: step
-      duration: 10000
-      interval: 1000
+    - type: step  # Sends messages for a duration with a fixed interval
+      duration: 10000  # Total step duration (ms)
+      interval: 1000  # Interval between messages (ms)
     - type: step
       duration: 5000
       interval: 5000
-    - type: step
-      duration: 0
-      interval: 1000
+    - type: burst  # Sends a burst of messages after a delay
+      delay: 100
+      size: 10
+    - type: delay  # Pauses for a certain time before next step
+      delay: 500
+    - type: count  # Sends a fixed number of messages with a delay
+      delay: 200
+      count: 20
+    - type: random  # Random pause between steps
+      min: 100
+      max: 1000
+    - type: loop  # Repeats indefinitely with a delay
+      delay: 300
+    - type: pulse  # Alternates between active and idle periods
+      pulse: 5000  # Active time (ms)
+      idle: 100  # Idle time (ms)
+    - type: traffic-spike  # Simulates a traffic spike
+      normal: 10000  # Normal interval (ms)
+      spike: 1000  # Interval during the spike (ms)
+      duration: 50000  # Duration of the spike (ms)
+    - type: window  # Alternates active and inactive windows
+      active: 1000  # Active time (ms)
+      inactive: 5000  # Inactive time (ms)
+      interval: 200  # Interval between messages during the active window (ms)
+
+# Data generators that produce simulated values
 generators:
-  - type: boolean
+  # Basic generators
+  - type: timestamp  # Current timestamp
+    name: TimestampGenerator
+
+  - type: boolean  # True or false based on probability
     name: BooleanGenerator
-    probability: 0.5
-  - type: random_integer
+    probability: 0.5  # Probability of being true
+
+  - type: random_integer  # Random integer
     name: RandomInteger
     min: 10
     max: 100
-  - type: random_double
+
+  - type: random_double  # Random floating-point number
     name: RandomDouble
     min: 10
     max: 100
-    decimals: 3
+    decimals: 3  # Number of decimal places
+
+  # Continuous distributions
   - type: continuous_exponential
     name: ExponentialDistribution
-    lambda: 1
+    lambda: 1  # Rate of the distribution
     decimals: 2
+
   - type: continuous_log_normal
     name: LogNormalDistribution
-    mean: 2
-    stddev: 0.5
+    mean: 2  # Mean of the log-normal distribution
+    stddev: 0.5  # Standard deviation
     decimals: 2
+
   - type: continuous_normal
     name: NormalDistribution
-    mean: 10
-    stddev: 2
+    mean: 10  # Mean of the normal distribution
+    stddev: 2  # Standard deviation
     decimals: 2
+
   - type: continuous_triangular
     name: TriangularDistribution
     min: 10
     max: 100
-    mode: 55
+    mode: 55  # Most likely value
     decimals: 3
+
   - type: continuous_uniform
     name: UniformContinuousDistribution
     min: 10
     max: 100
     decimals: 3
+
+  # Discrete distributions
   - type: discrete_bernoulli
     name: BernoulliDistribution
     probability: 0.5
+
   - type: discrete_binomial
     name: BinomialDistribution
-    trials: 3
+    trials: 3  # Number of trials
     probability: 0.5
+
   - type: discrete_geometric
     name: GeometricDistribution
     probability: 0.5
+
   - type: discrete_poisson
     name: PoissonDistribution
-    lambda: 1
+    lambda: 1  # Average rate of events
+
   - type: discrete_uniform
     name: UniformDiscreteDistribution
     min: 10
     max: 100
+
+  # String generators
   - type: string
     name: StringWeightedGenerator
-    sampling: weighted
+    sampling: weighted  # Weighted selection
     values:
       - test-1
       - test-2
       - test-3
     weights:
-      - 0.5
-      - 0.3
-      - 0.2
+      - 0.5  # Probability of selecting test-1
+      - 0.3  # Probability of selecting test-2
+      - 0.2  # Probability of selecting test-3
+
   - type: string
     name: StringRandomGenerator
-    sampling: random
+    sampling: random  # Random selection without weight
     values:
       - test-1
       - test-2
       - test-3
-
-

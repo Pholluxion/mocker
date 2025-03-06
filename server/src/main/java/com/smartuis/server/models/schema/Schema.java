@@ -22,7 +22,6 @@ public class Schema {
     @Id
     String id;
 
-    @NotNull(message = "The name must be defined.")
     @NotBlank(message = "The name must be defined.")
     String name;
 
