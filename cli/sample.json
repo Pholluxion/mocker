@@ -8,7 +8,7 @@
       "topic": "device-messages",
       "clientId": "mocker-client-1",
       "username": "user",
-        "password": "password"
+      "password": "password"
     }
   ],
   "sampler": {
@@ -25,13 +25,52 @@
         "interval": 5000
       },
       {
-        "type": "step",
-        "duration": 0,
-        "interval": 1000
+        "type": "burst",
+        "delay": 100,
+        "count": 10
+      },
+      {
+        "type": "delay",
+        "delay": 500
+      },
+      {
+        "type": "count",
+        "delay": 200,
+        "count": 20
+      },
+      {
+        "type": "random",
+        "min": 100,
+        "max": 1000
+      },
+      {
+        "type": "loop",
+        "delay": 300
+      },
+      {
+        "type": "pulse",
+        "pulse": 5000,
+        "idle": 100
+      },
+      {
+        "type": "traffic-spike",
+        "normal": 10000,
+        "spike": 1000,
+        "duration": 50000
+      },
+      {
+        "type": "window",
+        "active": 1000,
+        "inactive": 5000,
+        "interval": 200
       }
     ]
   },
   "generators": [
+    {
+      "type": "timestamp",
+      "name": "TimestampGenerator"
+    },
     {
       "type": "boolean",
       "name": "BooleanGenerator",

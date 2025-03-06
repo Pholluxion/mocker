@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smartuis.server.models.interfaces.IGenerator;
 import com.smartuis.server.utils.Utils;
 
-public record RandomDouble(String name, int min, int max, int decimals) implements IGenerator<Double> {
+public record DoubleGenerator(String name, int min, int max, int decimals) implements IGenerator<Double> {
 
 
     @JsonCreator
-    public RandomDouble(
+    public DoubleGenerator(
             @JsonProperty("name") String name,
             @JsonProperty("min") int min,
             @JsonProperty("max") int max,

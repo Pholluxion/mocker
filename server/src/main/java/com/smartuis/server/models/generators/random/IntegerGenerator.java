@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smartuis.server.models.interfaces.IGenerator;
 import com.smartuis.server.utils.Utils;
 
-public record RandomInteger(String name, int min, int max) implements IGenerator<Integer> {
+public record IntegerGenerator(String name, int min, int max) implements IGenerator<Integer> {
     @JsonCreator
-    public RandomInteger(
+    public IntegerGenerator(
             @JsonProperty("name") String name,
             @JsonProperty("min") int min,
             @JsonProperty("max") int max
