@@ -1,0 +1,51 @@
+# Simulation name
+name: Smart UIS Sample
+
+# Communication protocols to send the generated data
+protocols:
+  - type: mqtt  # MQTT protocol
+    host: mosquitto  # MQTT broker address
+    port: 1883  # MQTT default port
+    topic: device-messages  # Topic where messages will be published
+    clientId: mocker-client-1  # Unique client identifier
+    username: user  # Authentication username
+    password: password  # Authentication password
+
+# Sampling strategy defining how and when data is generated
+sampler:
+  - type: loop  # Repeats indefinitely with a delay
+    delay: 1000 # Delay between messages (ms)
+
+# Data generators that produce simulated values
+generators:
+  # Basic generators
+  - type: timestamp  # Current timestamp
+    name: TimestampGenerator
+
+  - type: boolean  # True or false based on probability
+    name: BooleanGenerator
+    probability: 0.5  # Probability of being true
+
+  - type: random_integer  # Random integer
+    name: RandomInteger
+    min: 10
+    max: 100
+
+  - type: random_double  # Random floating-point number
+    name: RandomDouble
+    min: 10
+    max: 100
+    decimals: 3  # Number of decimal places
+
+  - type: string
+    name: StringWeightedGenerator
+    sampling: weighted  # Random selection without weight
+    values:
+      - RUNNING
+      - IDLE
+      - STOPPED
+    weights:
+      - 0.8
+      - 0.1
+      - 0.1
+

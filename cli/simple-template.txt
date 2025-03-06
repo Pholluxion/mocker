@@ -1,0 +1,11 @@
+{
+    "deviceUUID": "1",
+    "timeStamp": "{{TimestampGenerator}}",
+    "topic": "device-message",
+    "alert": {{BooleanGenerator}},
+    "status": "{{StringWeightedGenerator}}",
+    "values": {
+        "Temperature": {{RandomInteger}},
+        "Pressure": {{RandomDouble}}
+    }
+}
