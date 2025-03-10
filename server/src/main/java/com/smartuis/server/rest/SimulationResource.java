@@ -131,20 +131,6 @@ public class SimulationResource {
     }
 
     /**
-     * Deletes a simulation with the given ID.
-     *
-     * @param id the ID of the simulation to delete
-     * @return a Mono containing the ResponseEntity with a boolean indicating success or a not found status
-     */
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Boolean>> delete(@PathVariable String id) {
-        return simulationService
-                .delete(id)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
-
-    /**
      * Streams the logs of a simulation with the given ID.
      *
      * @param id       the ID of the simulation to stream logs for
