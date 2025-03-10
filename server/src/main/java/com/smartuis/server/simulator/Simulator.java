@@ -1,7 +1,5 @@
 package com.smartuis.server.simulator;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samskivert.mustache.Mustache;
 
 import com.smartuis.server.config.amqp.AmqpConnector;
@@ -180,6 +178,8 @@ public class Simulator {
 
         try {
             var message = processSample();
+
+            context.getStateMachine().getExtendedState().getVariables().put("log", message);
 
             if (mqttConnector.isConnected()) {
                 mqttConnector.publish(message);
