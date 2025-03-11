@@ -13,6 +13,7 @@ public interface SimulationService {
     Mono<Boolean> delete(String id);
     Mono<SimulationDTO> handleEvent(String id, Simulator.Event event);
     Flux<String> logs(String id,int interval);
+    Mono<Boolean> exists(String id);
 
 
 }

@@ -27,7 +27,7 @@
       {
         "type": "burst",
         "delay": 100,
-        "count": 10
+        "size": 10
       },
       {
         "type": "delay",

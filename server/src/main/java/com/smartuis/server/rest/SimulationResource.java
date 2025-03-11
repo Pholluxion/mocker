@@ -114,50 +114,36 @@ public class SimulationResource {
     }
 
     /**
-      * Streams the list of all simulations at a specified interval.
-      *
-      * @param interval the interval in seconds at which to stream the list of simulations
-      * @return a Flux containing the list of SimulationDTOs
-      */
-     @GetMapping(value = "/stream", produces = "text/event-stream")
-     public Flux<List<SimulationDTO>> stream(@RequestParam int interval) {
-
-         if (interval < 1) {
-             interval = 1;
-         }
-
-         return Flux.interval(Duration.ofSeconds(interval))
-                 .flatMap(i -> simulationService.findAll().collectList());
-     }
-
-    /**
-     * Deletes a simulation with the given ID.
+     * Streams the list of all simulations at a specified interval.
      *
-     * @param id the ID of the simulation to delete
-     * @return a Mono containing the ResponseEntity with a boolean indicating success or a not found status
+     * @param interval the interval in seconds at which to stream the list of simulations
+     * @return a Flux containing the list of SimulationDTOs
      */
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Boolean>> delete(@PathVariable String id) {
-        return simulationService
-                .delete(id)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    @GetMapping(value = "/stream", produces = "text/event-stream")
+    public Flux<List<SimulationDTO>> stream(@RequestParam int interval) {
+
+        if (interval < 1) {
+            interval = 1;
+        }
+
+        return Flux.interval(Duration.ofSeconds(interval))
+                .flatMap(i -> simulationService.findAll().collectList());
     }
 
- /**
-      * Streams the logs of a simulation with the given ID.
-      *
-      * @param id the ID of the simulation to stream logs for
-      * @param interval the interval in seconds at which to stream the logs
-      * @return a Flux containing the log messages
-      */
-     @GetMapping(value = "/logs/{id}", produces = "text/event-stream")
-     public Flux<String> logs(@PathVariable String id, @RequestParam int interval) {
+    /**
+     * Streams the logs of a simulation with the given ID.
+     *
+     * @param id       the ID of the simulation to stream logs for
+     * @param interval the interval in seconds at which to stream the logs
+     * @return a Flux containing the log messages
+     */
+    @GetMapping(value = "/logs/{id}", produces = "text/event-stream")
+    public Flux<String> logs(@PathVariable String id, @RequestParam int interval) {
 
-         if (interval < 1) {
-             interval = 1;
-         }
+        if (interval < 1) {
+            interval = 1;
+        }
 
-         return simulationService.logs(id, interval);
-     }
+        return simulationService.logs(id, interval);
+    }
 }

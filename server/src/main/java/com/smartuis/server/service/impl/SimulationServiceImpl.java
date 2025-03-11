@@ -17,7 +17,7 @@ public class SimulationServiceImpl implements SimulationService {
     private final SimulationRepository simulationRepository;
 
     public SimulationServiceImpl(SchemaRepository schemaRepository, SimulationRepository simulationRepository) {
-       this.simulationRepository = simulationRepository;
+        this.simulationRepository = simulationRepository;
         this.schemaRepository = schemaRepository;
     }
 
@@ -45,16 +45,29 @@ public class SimulationServiceImpl implements SimulationService {
 
     @Override
     public Mono<SimulationDTO> handleEvent(String id, Simulator.Event event) {
-        return simulationRepository.handleEvent(id, event);
+        return simulationRepository.exists(id)
+                .flatMap(exists -> {
+                    if (Boolean.FALSE.equals(exists)) {
+                        return schemaRepository.findById(id)
+                                .flatMap(simulationRepository::create)
+                                .flatMap(simulationDTO -> simulationRepository.handleEvent(id, event));
+                    }
+                    return simulationRepository.handleEvent(id, event);
+                });
+
+
     }
 
     @Override
     public Flux<String> logs(String id, int interval) {
-
-
         return simulationRepository.getById(id)
                 .map(SimulationDTO::id)
                 .flatMapMany(simulationId -> simulationRepository.logs(simulationId, interval));
+    }
+
+    @Override
+    public Mono<Boolean> exists(String id) {
+        return simulationRepository.exists(id);
     }
 
 

@@ -24,20 +24,19 @@ public class SchemaServiceImpl implements SchemaService {
 
     @Override
     public Mono<Schema> create(Schema schema) {
-
-        if (schema.getProtocolByType("mqtt") != null) {
-            return isClientMqttValid(schema)
-                    .flatMap(isValid -> {
-                        if (Boolean.TRUE.equals(isValid)) {
-                            return Mono.error(new IllegalArgumentException("Mqtt client id already exists"));
-                        }
-                        return schemaRepository.save(schema);
-                    });
-        }
-
-        return schemaRepository.findByName(schema.getName())
-                .flatMap(s -> Mono.error(new IllegalArgumentException("Schema with name " + schema.getName() + " already exists")))
-                .then(schemaRepository.save(schema));
+        return isNameValid(schema.getName())
+                .flatMap(isValid -> {
+                    if (Boolean.FALSE.equals(isValid)) {
+                        return Mono.error(new IllegalArgumentException("Schema with name " + schema.getName() + " already exists"));
+                    }
+                    return isClientMqttValid(schema)
+                            .flatMap(isMqttValid -> {
+                                if (Boolean.TRUE.equals(isMqttValid)) {
+                                    return Mono.error(new IllegalArgumentException("Schema with mqtt client id already exists"));
+                                }
+                                return schemaRepository.save(schema);
+                            });
+                });
     }
 
     @Override
@@ -73,12 +72,17 @@ public class SchemaServiceImpl implements SchemaService {
                 .flatMap(schemaRepository::save);
     }
 
-    private Mono<Boolean> isClientMqttValid(Schema schema) {
-        var newMqttProtocol = (MqttProtocol) schema.getProtocolByType("mqtt");
-        return findAll().any(s -> {
-            var currentMqttProtocol = (MqttProtocol) s.getProtocolByType("mqtt");
-            return newMqttProtocol.clientId().equals(currentMqttProtocol.clientId());
-        });
+   @Override
+    public Mono<Boolean> isClientMqttValid(Schema schema) {
+        var newClientId = ((MqttProtocol) schema.getProtocolByType("mqtt")).clientId();
+        return findAll().any(s -> newClientId.equals(((MqttProtocol) s.getProtocolByType("mqtt")).clientId()));
+    }
+
+    @Override
+    public Mono<Boolean> isNameValid(String name) {
+        return schemaRepository.findByName(name)
+                .map(schema -> false)
+                .defaultIfEmpty(true);
     }
 
 
