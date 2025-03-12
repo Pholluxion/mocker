@@ -1,8 +1,20 @@
 services:
+
+  database:
+    image: 'mongo:latest'
+#    ports:
+#      - "27017:27017"
+    networks:
+      - smart_campus_core_iot_campus_uis
+    volumes:
+      - mongo_data:/data/db
+
   server:
     image: 'pholluxion/mocker-server:latest'
+    depends_on:
+      - database
     environment:
-        - MONGO_HOST=mongo
+        - MONGO_HOST=database
         - MONGO_PORT=27017
         - MONGO_DB=iot
     ports:
@@ -13,3 +25,6 @@ services:
 networks:
   smart_campus_core_iot_campus_uis:
     external: true
+
+volumes:
+    mongo_data:
