@@ -1,0 +1,33 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+.search {
+  position: relative;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 30rem;
+  }
+
+  input {
+    border: 1px solid var.$borde-principal;
+    border-radius: 0.7rem;
+    width: 100%;
+    color: var.$texto-principal;
+
+    &:focus {
+      outline: none;
+      border: 1px solid var.$texto-principal;
+    }
+  }
+}
+
+.input-icon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: unset;
+  right: 12px;
+}

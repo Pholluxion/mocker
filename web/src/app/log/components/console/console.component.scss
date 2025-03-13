@@ -1,0 +1,18 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+.console {
+  background-color: var.$borde-principal;
+  width: 100%;
+  height: 100%;
+  max-height: 300px;
+  border-radius: 0.6rem;
+  padding: 1rem;
+  font-family: var.$fuente-secundaria;
+  color: var.$texto-secundario;
+  overflow-y: auto;
+}
+
+mat-spinner {
+  width: 50px !important;
+  height: 50px !important;
+}

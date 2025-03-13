@@ -1,0 +1,21 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+h1 {
+  color: var.$texto-principal;
+  padding: 0;
+  margin: 0;
+}
+
+mat-spinner {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+button {
+  border-radius: 0.6rem;
+  &:hover {
+    -webkit-box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+    -moz-box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+    box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+  }
+}
