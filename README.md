@@ -6,7 +6,7 @@
 v0.12.0
 ```
 
-# Ejamplo de configuración para **Smart Campus UIS**
+# Ejemplo de configuración para **Smart Campus UIS**
 
 Este es un ejemplo de configuración en YAML para la simulación de sensores en la plataforma **Smart Campus UIS**
 
