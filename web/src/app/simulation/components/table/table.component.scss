@@ -1,0 +1,140 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+table {
+  width: 100%;
+  border-radius: 0.7rem;
+  border-spacing: 0;
+  border-collapse: separate;
+  border: 1px solid var.$borde-principal;
+  color: var.$texto-secundario;
+  font-family: var.$fuente-secundaria;
+
+  thead {
+    th {
+      border-bottom: 1px solid var.$borde-principal;
+      padding-top: 0.8rem;
+      padding-bottom: 0.8rem;
+
+      &:first-child {
+        border-top-left-radius: 0.7rem;
+        padding-left: 1rem;
+        width: 20%;
+      }
+
+      &:nth-child(2) {
+        width: 50%;
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      &:nth-child(3) {
+        width: 25%;
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      &:last-child {
+        border-top-right-radius: 0.7rem;
+        padding-right: 1rem;
+        width: 5%;
+      }
+    }
+  }
+
+  tbody {
+    td {
+      border-bottom: 1px solid var.$borde-principal;
+      padding: 0.1rem 0rem;
+      cursor: pointer;
+
+      &:first-child {
+        padding-left: 1rem;
+      }
+
+      &:nth-child(2) {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      &:nth-child(3) {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      &:last-child {
+        text-align: right;
+        padding-right: 1rem;
+      }
+    }
+
+    tr:last-child {
+      td {
+        border-bottom: none;
+
+        &:first-child {
+          border-bottom-left-radius: 0.7rem;
+        }
+        &:last-child {
+          border-bottom-right-radius: 0.7rem;
+        }
+      }
+    }
+
+    .table-empty {
+      text-align: center !important;
+      height: 4.2rem;
+    }
+  }
+}
+
+button {
+  border-radius: 0.6rem;
+  &:hover {
+    -webkit-box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+    -moz-box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+    box-shadow: 0px 0px 5px 0px var.$texto-secundario;
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.wave-container {
+  position: relative;
+  left: -20px;
+}
+
+.wave-container2{
+  position: relative;
+  left: -20px;
+}
+
+span{
+  position: relative;
+  left: -35px;
+}
+
+.wave-container svg {
+  width: 70px;
+  height: 70px;
+}
+
+.wave-container circle {
+  transform-origin: 50% 50%;
+}
+
+.wave-container .wave-2 {
+  animation: wave 2s infinite;
+}
+
+.wave-container .wave-3 {
+  animation: wave 2s infinite;
+}

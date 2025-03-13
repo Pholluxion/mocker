@@ -1,0 +1,10 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+button {
+  color: var.$texto-principal !important;
+}
+
+.btn-delete{
+  background-color: var.$peligro;
+  color: var.$texto-principal;
+}

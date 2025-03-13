@@ -1,0 +1,24 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+nav {
+  background-color: var.$bg-principal;
+  border-bottom: 1px solid var.$borde-principal;
+  font-family: var.$fuente-principal;
+  
+  div span {
+    color: var.$primario;
+  }
+
+  ul {
+    li {
+      a {
+        color: var.$texto-secundario;
+      }
+    }
+  }
+}
+
+.routes {
+  color: var.$texto-principal;
+  font-weight: 600;
+}

@@ -1,0 +1,28 @@
+<input
+  (change)="onFileSelected($event)"
+  #fileInput
+  type="file"
+  hidden
+  accept=".yaml, .yml"
+/>
+
+<button class="btn" type="{{ type }}" (click)="fileInput.click()">
+  <div class="flex justify-between items-center space-x-2">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M1.66663 10.3333V11.6667C1.66663 12.0203 1.8071 12.3594 2.05715 12.6095C2.3072 12.8595 2.64634 13 2.99996 13H11C11.3536 13 11.6927 12.8595 11.9428 12.6095C12.1928 12.3594 12.3333 12.0203 12.3333 11.6667V10.3333M3.66663 5L6.99996 1.66666M6.99996 1.66666L10.3333 5M6.99996 1.66666V9.66666"
+        stroke="#09090B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    <span>{{ title }}</span>
+  </div>
+</button>
