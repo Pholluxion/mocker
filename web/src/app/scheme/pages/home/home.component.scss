@@ -1,0 +1,20 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+
+h1 {
+  color: var.$texto-principal;
+}
+
+pre {
+  color: var.$texto-secundario;
+}
+
+.container-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-spinner{
+  width: 50px !important;
+  height: 50px !important;
+}

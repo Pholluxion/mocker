@@ -1,0 +1,18 @@
+<nav class="text-white p-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Logo o nombre de la aplicación -->
+    <div class="text-lg"><span class="font-bold">MOCKER</span></div>
+
+    <!-- Enlaces de navegación -->
+    <ul class="flex space-x-4">
+      <li>
+        <a [routerLink]="'/schemas'" routerLinkActive="routes">Esquemas</a>
+      </li>
+      <li>
+        <a [routerLink]="'/simulations'" routerLinkActive="routes"
+          >Simulaciones</a
+        >
+      </li>
+    </ul>
+  </div>
+</nav>

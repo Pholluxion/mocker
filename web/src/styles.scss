@@ -1,0 +1,43 @@
+// Se importan módulos y archivos de estilos:
+@use "@angular/material" as mat; // Importa los estilos de Angular Material
+@use "./app/utilities/sass/variables.scss" as var; // Importa el archivo de variables Sass personal
+@use "sass:color"; // Importa el módulo de funciones de color de Sass para manipular colores
+
+// Se incluyen las directivas de Tailwind CSS para base, componentes y utilidades
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Estilos globales para el elemento <body>
+body {
+  background-color: var.$bg-principal;
+  font-family: var.$fuente-principal;
+}
+
+// Estilos para el componente de snackbar de error
+.snackbar-error {
+  .mdc-snackbar__surface {
+    background-color: var.$peligro !important;
+    color: var.$texto-principal !important;
+  }
+  // Estilos para cualquier botón dentro del snackbar de error
+  button {
+    color: var.$texto-principal !important;
+  }
+}
+// Estilos para el componente de snackbar de éxito
+.snackbar-success {
+  .mdc-snackbar__surface {
+    background-color: color.scale(var.$primario, $lightness: -30%) !important;
+    color: var.$texto-principal !important;
+  }
+  // Estilos para cualquier botón dentro del snackbar de éxito
+  button {
+    color: var.$texto-principal !important;
+  }
+}
+// Estilos para los componentes del spinner de progreso de Angular Material
+.mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle,
+.mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic {
+  stroke: var.$primario !important;
+}

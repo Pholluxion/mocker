@@ -1,0 +1,408 @@
+<div class="overflow-x-auto">
+  <table class="min-w-full">
+    <thead>
+      <tr>
+        <th class="text-start">ID</th>
+        <th class="text-start">Nombre</th>
+        <th class="text-end">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (schema of schemas; track $index) {
+      <tr>
+        <td>{{ schema.id }}</td>
+        <td>{{ schema.name | titlecase }}</td>
+        <td>
+          <div class="flex justify-end items-center space-x-2">
+            <input
+              (change)="onFileSelected($event, schema.id)"
+              #fileInput
+              type="file"
+              hidden
+              accept=".txt"
+            />
+            <button (click)="fileInput.click()" class="btn-code">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  fill="#09090B"
+                />
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  stroke="#202020"
+                />
+                <path
+                  d="M19.6666 10.5V13.8333C19.6666 14.0543 19.7544 14.2663 19.9107 14.4226C20.067 14.5789 20.2789 14.6667 20.5 14.6667H23.8333M19.6666 10.5H13.8333C13.3913 10.5 12.9673 10.6756 12.6548 10.9882C12.3422 11.3007 12.1666 11.7246 12.1666 12.1667V23.8333C12.1666 24.2754 12.3422 24.6993 12.6548 25.0118C12.9673 25.3244 13.3913 25.5 13.8333 25.5H22.1666C22.6087 25.5 23.0326 25.3244 23.3451 25.0118C23.6577 24.6993 23.8333 24.2754 23.8333 23.8333V14.6667M19.6666 10.5L23.8333 14.6667M16.3333 18.8333L15.5 20.5L16.3333 22.1667M19.6666 18.8333L20.5 20.5L19.6666 22.1667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            @if (!schema.status) {
+            <button (click)="runningSchema(schema.id)" class="btn-play">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="36" height="36" rx="10" fill="#22C55E" />
+                <path
+                  d="M13.8334 11.3333V24.6667L24.6667 18L13.8334 11.3333Z"
+                  stroke="#09090B"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            }
+            <button (click)="openDialog(schema.id)" class="btn-delete">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="36"
+                  height="36"
+                  rx="10"
+                  fill="#DC2626"
+                  fill-opacity="0.4"
+                />
+                <path
+                  d="M11.3334 13.8333H24.6667M16.3334 17.1667V22.1667M19.6667 17.1667V22.1667M12.1667 13.8333L13 23.8333C13 24.2754 13.1756 24.6993 13.4882 25.0118C13.8008 25.3244 14.2247 25.5 14.6667 25.5H21.3334C21.7754 25.5 22.1993 25.3244 22.5119 25.0118C22.8244 24.6993 23 24.2754 23 23.8333L23.8334 13.8333M15.5 13.8333V11.3333C15.5 11.1123 15.5878 10.9004 15.7441 10.7441C15.9004 10.5878 16.1124 10.5 16.3334 10.5H19.6667C19.8877 10.5 20.0997 10.5878 20.256 10.7441C20.4122 10.9004 20.5 11.1123 20.5 11.3333V13.8333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      }@empty {
+      <tr>
+        <td colspan="3" class="table-empty"><span>No hay esquemas...</span></td>
+      </tr>
+      }
+
+      <!-- <tr>
+        <td>ADLKNAMDAMNADLKNAMDAMADLKNAMDAM.ID</td>
+        <td>Esquema 1</td>
+        <td>
+          <div class="flex justify-end items-center space-x-2">
+            <button class="btn-code">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  fill="#09090B"
+                />
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  stroke="#202020"
+                />
+                <path
+                  d="M19.6666 10.5V13.8333C19.6666 14.0543 19.7544 14.2663 19.9107 14.4226C20.067 14.5789 20.2789 14.6667 20.5 14.6667H23.8333M19.6666 10.5H13.8333C13.3913 10.5 12.9673 10.6756 12.6548 10.9882C12.3422 11.3007 12.1666 11.7246 12.1666 12.1667V23.8333C12.1666 24.2754 12.3422 24.6993 12.6548 25.0118C12.9673 25.3244 13.3913 25.5 13.8333 25.5H22.1666C22.6087 25.5 23.0326 25.3244 23.3451 25.0118C23.6577 24.6993 23.8333 24.2754 23.8333 23.8333V14.6667M19.6666 10.5L23.8333 14.6667M16.3333 18.8333L15.5 20.5L16.3333 22.1667M19.6666 18.8333L20.5 20.5L19.6666 22.1667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-play">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="36" height="36" rx="10" fill="#22C55E" />
+                <path
+                  d="M13.8334 11.3333V24.6667L24.6667 18L13.8334 11.3333Z"
+                  stroke="#09090B"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-delete">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="36"
+                  height="36"
+                  rx="10"
+                  fill="#DC2626"
+                  fill-opacity="0.4"
+                />
+                <path
+                  d="M11.3334 13.8333H24.6667M16.3334 17.1667V22.1667M19.6667 17.1667V22.1667M12.1667 13.8333L13 23.8333C13 24.2754 13.1756 24.6993 13.4882 25.0118C13.8008 25.3244 14.2247 25.5 14.6667 25.5H21.3334C21.7754 25.5 22.1993 25.3244 22.5119 25.0118C22.8244 24.6993 23 24.2754 23 23.8333L23.8334 13.8333M15.5 13.8333V11.3333C15.5 11.1123 15.5878 10.9004 15.7441 10.7441C15.9004 10.5878 16.1124 10.5 16.3334 10.5H19.6667C19.8877 10.5 20.0997 10.5878 20.256 10.7441C20.4122 10.9004 20.5 11.1123 20.5 11.3333V13.8333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>ADLKNAMDAMNADLKNAMDAMADLKNAMDAM.ID</td>
+        <td>Esquema 2</td>
+        <td>
+          <div class="flex justify-end items-center space-x-2">
+            <button class="btn-code">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  fill="#09090B"
+                />
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  stroke="#202020"
+                />
+                <path
+                  d="M19.6666 10.5V13.8333C19.6666 14.0543 19.7544 14.2663 19.9107 14.4226C20.067 14.5789 20.2789 14.6667 20.5 14.6667H23.8333M19.6666 10.5H13.8333C13.3913 10.5 12.9673 10.6756 12.6548 10.9882C12.3422 11.3007 12.1666 11.7246 12.1666 12.1667V23.8333C12.1666 24.2754 12.3422 24.6993 12.6548 25.0118C12.9673 25.3244 13.3913 25.5 13.8333 25.5H22.1666C22.6087 25.5 23.0326 25.3244 23.3451 25.0118C23.6577 24.6993 23.8333 24.2754 23.8333 23.8333V14.6667M19.6666 10.5L23.8333 14.6667M16.3333 18.8333L15.5 20.5L16.3333 22.1667M19.6666 18.8333L20.5 20.5L19.6666 22.1667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-delete">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="36"
+                  height="36"
+                  rx="10"
+                  fill="#DC2626"
+                  fill-opacity="0.4"
+                />
+                <path
+                  d="M11.3334 13.8333H24.6667M16.3334 17.1667V22.1667M19.6667 17.1667V22.1667M12.1667 13.8333L13 23.8333C13 24.2754 13.1756 24.6993 13.4882 25.0118C13.8008 25.3244 14.2247 25.5 14.6667 25.5H21.3334C21.7754 25.5 22.1993 25.3244 22.5119 25.0118C22.8244 24.6993 23 24.2754 23 23.8333L23.8334 13.8333M15.5 13.8333V11.3333C15.5 11.1123 15.5878 10.9004 15.7441 10.7441C15.9004 10.5878 16.1124 10.5 16.3334 10.5H19.6667C19.8877 10.5 20.0997 10.5878 20.256 10.7441C20.4122 10.9004 20.5 11.1123 20.5 11.3333V13.8333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>ADLKNAMDAMNADLKNAMDAMvADLKNAMDAM.ID</td>
+        <td>Esquema 3</td>
+        <td>
+          <div class="flex justify-end items-center space-x-2">
+            <button class="btn-code">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  fill="#09090B"
+                />
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  stroke="#202020"
+                />
+                <path
+                  d="M19.6666 10.5V13.8333C19.6666 14.0543 19.7544 14.2663 19.9107 14.4226C20.067 14.5789 20.2789 14.6667 20.5 14.6667H23.8333M19.6666 10.5H13.8333C13.3913 10.5 12.9673 10.6756 12.6548 10.9882C12.3422 11.3007 12.1666 11.7246 12.1666 12.1667V23.8333C12.1666 24.2754 12.3422 24.6993 12.6548 25.0118C12.9673 25.3244 13.3913 25.5 13.8333 25.5H22.1666C22.6087 25.5 23.0326 25.3244 23.3451 25.0118C23.6577 24.6993 23.8333 24.2754 23.8333 23.8333V14.6667M19.6666 10.5L23.8333 14.6667M16.3333 18.8333L15.5 20.5L16.3333 22.1667M19.6666 18.8333L20.5 20.5L19.6666 22.1667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-delete">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="36"
+                  height="36"
+                  rx="10"
+                  fill="#DC2626"
+                  fill-opacity="0.4"
+                />
+                <path
+                  d="M11.3334 13.8333H24.6667M16.3334 17.1667V22.1667M19.6667 17.1667V22.1667M12.1667 13.8333L13 23.8333C13 24.2754 13.1756 24.6993 13.4882 25.0118C13.8008 25.3244 14.2247 25.5 14.6667 25.5H21.3334C21.7754 25.5 22.1993 25.3244 22.5119 25.0118C22.8244 24.6993 23 24.2754 23 23.8333L23.8334 13.8333M15.5 13.8333V11.3333C15.5 11.1123 15.5878 10.9004 15.7441 10.7441C15.9004 10.5878 16.1124 10.5 16.3334 10.5H19.6667C19.8877 10.5 20.0997 10.5878 20.256 10.7441C20.4122 10.9004 20.5 11.1123 20.5 11.3333V13.8333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>ADLKNAMDAMNADLKNAMDAMADLKNAMDAM.ID</td>
+        <td>Esquema 4</td>
+        <td>
+          <div class="flex justify-end items-center space-x-2">
+            <button class="btn-code">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  fill="#09090B"
+                />
+                <rect
+                  x="0.5"
+                  y="0.5"
+                  width="35"
+                  height="35"
+                  rx="9.5"
+                  stroke="#202020"
+                />
+                <path
+                  d="M19.6666 10.5V13.8333C19.6666 14.0543 19.7544 14.2663 19.9107 14.4226C20.067 14.5789 20.2789 14.6667 20.5 14.6667H23.8333M19.6666 10.5H13.8333C13.3913 10.5 12.9673 10.6756 12.6548 10.9882C12.3422 11.3007 12.1666 11.7246 12.1666 12.1667V23.8333C12.1666 24.2754 12.3422 24.6993 12.6548 25.0118C12.9673 25.3244 13.3913 25.5 13.8333 25.5H22.1666C22.6087 25.5 23.0326 25.3244 23.3451 25.0118C23.6577 24.6993 23.8333 24.2754 23.8333 23.8333V14.6667M19.6666 10.5L23.8333 14.6667M16.3333 18.8333L15.5 20.5L16.3333 22.1667M19.6666 18.8333L20.5 20.5L19.6666 22.1667"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-play">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="36" height="36" rx="10" fill="#22C55E" />
+                <path
+                  d="M13.8334 11.3333V24.6667L24.6667 18L13.8334 11.3333Z"
+                  stroke="#09090B"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button class="btn-delete">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  width="36"
+                  height="36"
+                  rx="10"
+                  fill="#DC2626"
+                  fill-opacity="0.4"
+                />
+                <path
+                  d="M11.3334 13.8333H24.6667M16.3334 17.1667V22.1667M19.6667 17.1667V22.1667M12.1667 13.8333L13 23.8333C13 24.2754 13.1756 24.6993 13.4882 25.0118C13.8008 25.3244 14.2247 25.5 14.6667 25.5H21.3334C21.7754 25.5 22.1993 25.3244 22.5119 25.0118C22.8244 24.6993 23 24.2754 23 23.8333L23.8334 13.8333M15.5 13.8333V11.3333C15.5 11.1123 15.5878 10.9004 15.7441 10.7441C15.9004 10.5878 16.1124 10.5 16.3334 10.5H19.6667C19.8877 10.5 20.0997 10.5878 20.256 10.7441C20.4122 10.9004 20.5 11.1123 20.5 11.3333V13.8333"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr> -->
+    </tbody>
+  </table>
+</div>

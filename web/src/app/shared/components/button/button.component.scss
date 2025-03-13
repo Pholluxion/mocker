@@ -1,0 +1,26 @@
+@use "./../../../utilities/sass/variables.scss" as var;
+@use "sass:color";
+
+.btn {
+  background-color: var.$primario;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  font-size: 15px;
+  width: 100%;
+  height: 2.3rem;
+  font-family: var.$fuente-principal;
+
+  img {
+    transform: scale(1);
+  }
+
+  span {
+    color: var.$bg-principal;
+  }
+
+  &:hover {
+    background-color: color.scale(var.$primario, $lightness: -10%);
+    color: color.scale(var.$texto-principal, $lightness: -90%);
+  }
+}
