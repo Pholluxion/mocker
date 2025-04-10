@@ -1,0 +1,49 @@
+name: Escenario Intermedio
+
+protocols:
+  - type: mqtt
+    host: localhost
+    port: 1883
+    topic: device-messages
+    clientId: mocker-client-1
+    username: user
+    password: password
+
+  - type: amqp
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: simulation_exchange
+    routingKey: simulation.key
+
+sampler:
+  type: sequential
+  steps:
+    - type: step
+      duration: 10000
+      interval: 1000
+    - type: pulse
+      pulse: 5000
+      idle: 100
+    - type: loop
+      delay: 3000
+
+generators:
+  - type: boolean
+    name: BooleanGenerator
+    probability: 0.8
+
+  - type: timestamp
+    name: TimestampGenerator
+
+  - type: random_integer
+    name: RandomInteger
+    min: 10
+    max: 100
+
+  - type: random_double
+    name: RandomDouble
+    min: 10
+    max: 100
+    decimals: 3

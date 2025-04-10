@@ -1,0 +1,55 @@
+name: Escenario Avanzado
+
+protocols:
+  - type: mqtt
+    host: localhost
+    port: 1883
+    topic: device-messages
+    clientId: mocker-client-1
+    username: user
+    password: password
+
+  - type: amqp
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: simulation_exchange
+    routingKey: simulation.key
+
+sampler:
+  type: sequential
+  steps:
+    - type: step
+      duration: 10000
+      interval: 1000
+    - type: delay
+      delay: 500
+    - type: count
+      delay: 200
+      count: 20
+    - type: random
+      min: 100
+      max: 1000
+      idle: 100
+    - type: loop
+      delay: 1000
+
+generators:
+  - type: continuous_log_normal
+    name: ContinuousLogNormalGenerator
+    mean: 2
+    stddev: 0.5
+    decimals: 2
+
+  - type: discrete_poisson
+    name: DiscretePoissonGenerator
+    lambda: 1
+
+  - type: string
+    name: StringGenerator
+    sampling: random
+    values:
+      - dev-A
+      - dev-B
+      - dev-C
