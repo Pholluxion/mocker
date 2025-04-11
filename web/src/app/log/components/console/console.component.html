@@ -1,5 +1,5 @@
-<div class="console">
-  @for (log of dataLogs; track $index) {
-  <pre>{{ log | json }}</pre>
-  }
+<div #logContainer class="console" (scroll)="onScroll($event)">
+  <div *ngFor="let log of dataLogs">
+    <pre>{{ log | json }}</pre>
+  </div>
 </div>

@@ -2,10 +2,8 @@ services:
 
   database:
     image: 'mongo:latest'
-#    ports:
-#      - "27017:27017"
     networks:
-      - smart_campus_core_iot_campus_uis
+      - mocker
     volumes:
       - mongo_data:/data/db
 
@@ -20,20 +18,22 @@ services:
     ports:
       - "8090:8090"
     networks:
+      - mocker
       - smart_campus_core_iot_campus_uis
 
   web:
-#    build: ./web
     image: 'pholluxion/mocker-web:latest'
+    depends_on:
+      - server
     ports:
       - "3000:80"
     restart: unless-stopped
-    networks:
-      - smart_campus_core_iot_campus_uis
 
 networks:
   smart_campus_core_iot_campus_uis:
     external: true
+  mocker:
+    driver: bridge
 
 volumes:
     mongo_data:
