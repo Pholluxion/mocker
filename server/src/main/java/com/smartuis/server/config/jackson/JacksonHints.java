@@ -57,6 +57,7 @@ public class JacksonHints implements RuntimeHintsRegistrar {
         hints.reflection().registerType(IntegerGenerator.class, this::registerMembers);
         hints.reflection().registerType(StringGenerator.class, this::registerMembers);
         hints.reflection().registerType(TimestampGenerator.class, this::registerMembers);
+        hints.reflection().registerType(DoubleListGenerator.class, this::registerMembers);
 
         hints.reflection().registerType(ExponentialDistribution.class, this::registerMembers);
         hints.reflection().registerType(LogNormalDistribution.class, this::registerMembers);

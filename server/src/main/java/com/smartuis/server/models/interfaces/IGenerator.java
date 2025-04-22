@@ -14,6 +14,7 @@ import com.smartuis.server.models.generators.discrete.*;
         @JsonSubTypes.Type(value = IntegerGenerator.class, name = "random_integer"),
         @JsonSubTypes.Type(value = StringGenerator.class, name = "string"),
         @JsonSubTypes.Type(value = TimestampGenerator.class, name = "timestamp"),
+        @JsonSubTypes.Type(value = DoubleListGenerator.class, name = "double_list"),
 
         @JsonSubTypes.Type(value = ExponentialDistribution.class, name = "continuous_exponential"),
         @JsonSubTypes.Type(value = LogNormalDistribution.class, name = "continuous_log_normal"),
