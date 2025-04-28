@@ -3,7 +3,10 @@ package com.smartuis.server.models.protocols;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.smartuis.server.models.interfaces.IProtocol;
+
+import java.util.Arrays;
 
 public record AmqpProtocol(
         String host,
@@ -11,8 +14,16 @@ public record AmqpProtocol(
         String username,
         String password,
         String exchange,
-        String routingKey
+        String routingKey,
+        String exchangeType
 ) implements IProtocol {
+
+    public static final String[] EXCHANGE_TYPES = {
+            BuiltinExchangeType.DIRECT.getType(),
+            BuiltinExchangeType.FANOUT.getType(),
+            BuiltinExchangeType.HEADERS.getType(),
+            BuiltinExchangeType.TOPIC.getType(),
+    };
 
     @JsonCreator
     public AmqpProtocol(
@@ -21,7 +32,8 @@ public record AmqpProtocol(
             @JsonProperty("username") String username,
             @JsonProperty("password") String password,
             @JsonProperty("exchange") String exchange,
-            @JsonProperty("routingKey") String routingKey
+            @JsonProperty("routingKey") String routingKey,
+            @JsonProperty("exchangeType") String exchangeType
     ) {
 
         if (port == null || port < 1) {
@@ -36,16 +48,23 @@ public record AmqpProtocol(
             throw new IllegalArgumentException("amqp protocol requires exchange");
         }
 
+        if ( !Arrays.asList(EXCHANGE_TYPES).contains(exchangeType)) {
+            throw new IllegalArgumentException("amqp protocol requires valid exchange type  [" + String.join(", ", EXCHANGE_TYPES) + "]");
+        }
+
+
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
         this.exchange = exchange;
         this.routingKey = routingKey;
+        this.exchangeType =  exchangeType == null ? BuiltinExchangeType.FANOUT.getType()  : exchangeType;
     }
 
     @Override
     public String type() {
         return "amqp";
     }
+
 }

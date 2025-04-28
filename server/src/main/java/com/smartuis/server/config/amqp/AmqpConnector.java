@@ -55,7 +55,7 @@ public class AmqpConnector {
             this.connection = connectionFactory.newConnection();
             this.channel = connection.createChannel();
 
-            channel.exchangeDeclare(this.protocol.exchange(), BuiltinExchangeType.DIRECT, true);
+            channel.exchangeDeclare(this.protocol.exchange(), this.protocol.exchangeType(), true);
 
             log.info("Successfully connected to RabbitMQ at {}:{}", connectionFactory.getHost(), connectionFactory.getPort());
         } catch (IOException | TimeoutException e) {
