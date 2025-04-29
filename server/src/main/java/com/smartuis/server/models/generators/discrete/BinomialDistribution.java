@@ -9,7 +9,7 @@ public record BinomialDistribution(String name, int trials, double probability) 
 
 
     @JsonCreator
-    public BinomialDistribution(@JsonProperty("name") String name, @JsonProperty("trials") int trials, @JsonProperty("p") double probability) {
+    public BinomialDistribution(@JsonProperty("name") String name, @JsonProperty("trials") int trials, @JsonProperty("probability") double probability) {
 
         if (trials < 0) {
             throw new IllegalArgumentException("binomial distribution: trials must be non-negative");
