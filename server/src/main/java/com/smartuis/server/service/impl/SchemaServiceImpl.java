@@ -74,7 +74,15 @@ public class SchemaServiceImpl implements SchemaService {
 
    @Override
     public Mono<Boolean> isClientMqttValid(Schema schema) {
-        var newClientId = ((MqttProtocol) schema.getProtocolByType("mqtt")).clientId();
+        var mqttProtocol =  schema.getProtocolByType("mqtt");
+
+        if (!(mqttProtocol instanceof MqttProtocol)) {
+            return Mono.just(false);
+        }
+
+        var newClientId = ((MqttProtocol) mqttProtocol).clientId();
+
+
         return findAll().any(s -> newClientId.equals(((MqttProtocol) s.getProtocolByType("mqtt")).clientId()));
     }
 

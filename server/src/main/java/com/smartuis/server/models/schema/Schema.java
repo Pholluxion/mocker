@@ -45,12 +45,19 @@ public class Schema {
     }
 
     public IProtocol getProtocolByType(String type) {
+
+        if (type == null || type.isBlank()) {
+            throw new IllegalArgumentException("protocol type cannot be null or empty");
+        }
+
+        if (this.protocols == null || this.protocols.isEmpty()) {
+            throw new IllegalArgumentException("protocols cannot be null or empty");
+        }
+
         return this.protocols
                 .stream()
                 .filter(protocol -> protocol.type().equals(type))
                 .findFirst()
                 .orElse(null);
     }
-
-
 }
