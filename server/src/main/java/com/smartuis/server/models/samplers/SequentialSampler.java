@@ -24,6 +24,6 @@ public record SequentialSampler(List<ISampler> steps) implements ISampler {
 
     @Override
     public Flux<Long> sample() {
-        return Flux.fromIterable(steps).concatMap(ISampler::sample);
+        return Flux.fromIterable(steps).concatMap(ISampler::sample).repeat();
     }
 }

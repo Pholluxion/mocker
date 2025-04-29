@@ -7,33 +7,51 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 
-public record TrafficSpikeSampler(Integer normal, Integer spike, Integer duration) implements ISampler {
+public record TrafficSpikeSampler(Integer normalInterval,
+                                  Integer spikeInterval,
+                                  Integer spikeDuration,
+                                  Integer normalDuration
+) implements ISampler {
 
     @JsonCreator
     public TrafficSpikeSampler(
-            @JsonProperty("normal") Integer normal,
-            @JsonProperty("spike") Integer spike,
-            @JsonProperty("duration") Integer duration
+            @JsonProperty("normalInterval") Integer normalInterval,
+            @JsonProperty("spikeInterval") Integer spikeInterval,
+            @JsonProperty("spikeDuration") Integer spikeDuration,
+            @JsonProperty("normalDuration") Integer normalDuration
     ) {
-        if (normal == null || normal < 100) {
-            throw new IllegalArgumentException("traffic spike sampler: normal must be greater than 100");
+
+        if (normalInterval == null || normalInterval < 100) {
+            throw new IllegalArgumentException("traffic spike sampler: normalInterval must be >= 100 ms");
         }
-        if (spike == null || spike < 10) {
-            throw new IllegalArgumentException("traffic spike sampler: spike must be greater than 10");
+        if (spikeInterval == null || spikeInterval < 10) {
+            throw new IllegalArgumentException("traffic spike sampler: spikeInterval must be >= 10 ms");
         }
-        if (duration == null || duration <= 0) {
-            throw new IllegalArgumentException("traffic spike sampler: duration must be positive");
+        if (spikeDuration == null || spikeDuration <= 0) {
+            throw new IllegalArgumentException("traffic spike sampler: spikeDuration must be positive");
         }
-        this.normal = normal;
-        this.spike = spike;
-        this.duration = duration;
+        if (normalDuration == null || normalDuration <= 0) {
+            throw new IllegalArgumentException("traffic spike sampler: normalDuration must be positive");
+        }
+
+        this.normalDuration = normalDuration;
+        this.spikeDuration = spikeDuration;
+        this.spikeInterval = spikeInterval;
+        this.normalInterval = normalInterval;
+
     }
 
     @Override
     public Flux<Long> sample() {
-        Flux<Long> spikeFlux = Flux.interval(Duration.ofMillis(spike))
-                .take(Duration.ofMillis(duration));
-        Flux<Long> normalFlux = Flux.interval(Duration.ofMillis(normal));
+        long spikeEvents = spikeDuration / spikeInterval;
+
+        Flux<Long> spikeFlux = Flux.interval(Duration.ofMillis(spikeInterval))
+                .take(spikeEvents);
+
+        long normalEvents = normalDuration / normalInterval;
+        Flux<Long> normalFlux = Flux.interval(Duration.ofMillis(normalInterval))
+                .take(normalEvents);
+
         return Flux.concat(spikeFlux, normalFlux).repeat();
     }
 }
