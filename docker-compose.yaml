@@ -19,7 +19,7 @@ services:
       - "8090:8090"
     networks:
       - mocker
-      - smart_campus_core_iot_campus_uis
+      - smart_campus_workshop_iot_campus_uis
 
   web:
     image: 'pholluxion/mocker-web:latest'
@@ -29,8 +29,17 @@ services:
       - "3000:80"
     restart: unless-stopped
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: unless-stopped
+    networks:
+      - mocker
+
 networks:
-  smart_campus_core_iot_campus_uis:
+  smart_campus_workshop_iot_campus_uis:
     external: true
   mocker:
     driver: bridge
