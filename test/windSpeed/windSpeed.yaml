@@ -1,0 +1,30 @@
+name: Simulación de Velocidad del Viento
+
+protocols:
+  - type: mqtt
+    host: emqx
+    port: 1883
+    topic: smartCampus/windSpeed
+    clientId: windClient-10
+    username: user
+    password: password
+
+sampler:
+  type: sequential
+  steps:
+    - type: traffic-spike
+      normalDuration: 4000
+      normalInterval: 1200
+      spikeDuration: 800
+      spikeInterval: 150
+
+generators:
+  - type: timestamp
+    name: timeStamp
+    format: ISO_OFFSET_DATE_TIME
+
+  - type: continuous_normal
+    name: windSpeed
+    mean: 15.0
+    stddev: 5.0
+    decimals: 2

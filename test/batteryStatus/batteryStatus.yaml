@@ -1,0 +1,30 @@
+name: Simulación de Estado de Carga de Batería
+
+protocols:
+  - type: mqtt
+    host: emqx
+    port: 1883
+    topic: smartCampus/batteryStatus
+    clientId: batteryClient-9
+    username: user
+    password: password
+
+sampler:
+  type: sequential
+  steps:
+    - type: traffic-spike
+      normalDuration: 3000
+      normalInterval: 1000
+      spikeDuration: 500
+      spikeInterval: 100
+
+generators:
+  - type: timestamp
+    name: timeStamp
+    format: ISO_OFFSET_DATE_TIME
+
+  - type: continuous_normal
+    name: batteryCharge
+    mean: 70.0
+    stddev: 1.0
+    decimals: 1

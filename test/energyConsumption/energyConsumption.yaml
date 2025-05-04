@@ -1,0 +1,29 @@
+name: Simulación de Consumo Energético
+
+protocols:
+  - type: mqtt
+    host: emqx
+    port: 1883
+    topic: smartCampus/energyConsumption
+    clientId: energyClient-5
+    username: user
+    password: password
+
+sampler:
+  type: sequential
+  steps:
+    - type: traffic-spike
+      normalDuration: 4000
+      normalInterval: 1200
+      spikeDuration: 800
+      spikeInterval: 150
+
+generators:
+  - type: timestamp
+    name: timeStamp
+    format: ISO_OFFSET_DATE_TIME
+
+  - type: continuous_exponential
+    name: energyConsumption
+    lambda: 0.3
+    decimals: 2

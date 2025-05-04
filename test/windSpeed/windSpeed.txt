@@ -1,0 +1,13 @@
+  {
+    "header": {
+      "userUUID": "1",
+      "deviceId": "1",
+      "timeStamp": "{{timeStamp}}",
+      "location": "mocker test",
+      "topic": "mocker",
+      "shouldRequeue": true
+    },
+    "metrics": [
+      { "measurement": "WindSpeed", "value": {{windSpeed}} }
+    ]
+  }

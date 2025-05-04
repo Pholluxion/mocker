@@ -1,0 +1,30 @@
+name: Simulación de Tiempos de Respuesta
+
+protocols:
+  - type: mqtt
+    host: emqx
+    port: 1883
+    topic: smartCampus/sensor-response-time
+    clientId: sensor-response-client
+    username: user
+    password: password
+
+sampler:
+  type: sequential
+  steps:
+    - type: traffic-spike
+      normalDuration: 4000
+      normalInterval: 1200
+      spikeDuration: 800
+      spikeInterval: 150
+
+generators:
+  - type: timestamp
+    name: timeStamp
+    format: ISO_OFFSET_DATE_TIME
+
+  - type: continuous_log_normal
+    name: responseTime
+    mean: 1.5
+    stddev: 0.6
+    decimals: 2
